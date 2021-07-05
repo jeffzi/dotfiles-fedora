@@ -29,7 +29,7 @@ git_username='jeffzi'
 # common packages to install/remove
 #==============================================================================
 remove_packages=(
-    *evince*
+
     *hangul*
     *kkc*
     *libvirt*
@@ -38,7 +38,6 @@ remove_packages=(
     *speech*
     abrt
     cheese
-    eog
     f34-backgrounds-gnome
     fedora-bookmarks
     fedora-chromium-config
@@ -118,6 +117,7 @@ dnf_packages=(
     p7zip-plugins
     picom
     ripgrep
+    rofi
     rsms-inter-fonts
     rstudio
     thunar
@@ -230,7 +230,7 @@ dnf -y install rpmfusion-free-release-tainted
 # Tainted nonfree is dedicated to non-FLOSS packages without a clear redistribution
 # status by the copyright holder.
 dnf -y install rpmfusion-nonfree-release-tainted
-
+dnf -y install fedora-workstation-repositories
 dnf -y config-manager --set-enabled google-chrome
 dnf -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
 
@@ -276,7 +276,6 @@ dnf -y install akmod-nvidia
 dnf -y --best --allowerasing install xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-cuda-libs
 # In order to enable video acceleration support for your player
 dnf -y --best --allowerasing install vdpauinfo libva-vdpau-driver libva-utils
-modinfo -F version nvidia
 
 echo "${BOLD}${CYAN}Installing packages...${RESET}"
 dnf -y --best --allowerasing install "${dnf_packages[@]}"
