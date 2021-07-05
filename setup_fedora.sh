@@ -317,7 +317,7 @@ dnf -y install insync
 #==============================================================================
 echo "${BOLD}${CYAN}Setting up fish shell...${RESET}"
 dnf install -y fish util-linux-user starship
-chsh -s /usr/bin/fish
+chsh -s /usr/bin/fish $git_username
 
 #==============================================================================
 # setup python
