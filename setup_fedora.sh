@@ -326,25 +326,21 @@ chsh -s /usr/bin/fish
 #==============================================================================
 echo "${BOLD}${CYAN}Setting up python environment...${RESET}"
 
-# install qtile
-sudo -i -u $git_username <<EOF
-pyenv virtualenv-delete -f qtile
-pyenv install --list | grep " 3.9" | tail -1 | xargs -I % pyenv virtualenv % qtile
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-pyenv activate qtile
-pip install dbus-next psutil qtilecat
-pyenv deactivate
-EOF
+sudo -i -u $git_username bash << EOF
+# install pyenv
+curl https://pyenv.run | bash
 
-# add qtile session
-cat <<EOF > /usr/share/xsessions/qtile.desktop
-[Desktop Entry]
-Name=Qtile
-Comment=Qtile Session
-Exec=qtile start
-Type=Application
-Keywords=wm;tiling
+# install recent python versions
+pyenv install --list | grep " 3.7" | tail -1 | xargs pyenv install -v
+pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv install -v
+pyenv install --list | grep " 3.9" | tail -1 | xargs pyenv install -v
+# 3.8 as global version
+pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv global
+
+# install poetry
+curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+#  Store python virtual environments in the package s directory
+poetry config virtualenvs.in-project true
 EOF
 
 #==============================================================================
@@ -419,6 +415,32 @@ gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,m
 gsettings set org.gtk.Settings.FileChooser sort-directories-first true
 
 #==============================================================================
+# setup qtile
+#==============================================================================
+echo "${BOLD}${CYAN}Setting up qtile...${RESET}"
+
+# install qtile
+sudo -i -u $git_username <<EOF
+pyenv virtualenv-delete -f qtile
+pyenv install --list | grep " 3.9" | tail -1 | xargs -I % pyenv virtualenv % qtile
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
+pyenv activate qtile
+pip install dbus-next psutil qtilecat
+pyenv deactivate
+EOF
+
+# add qtile session
+cat <<EOF > /usr/share/xsessions/qtile.desktop
+[Desktop Entry]
+Name=Qtile
+Comment=Qtile Session
+Exec=qtile start
+Type=Application
+Keywords=wm;tiling
+EOF
+
+#==============================================================================
 # done
 #==============================================================================
 cat <<EOF
@@ -426,7 +448,7 @@ cat <<EOF
 Congratulations, everything is set up ! ✨ 🍰 ✨
 
 Non-automated tasks:
-- gnome-extensions: ${YELLOW}https://extensions.gnome.org/extension/3843/just-perfection/${RESET}
+- gnome-extensions: ${YELLOW}https://extensions.gnome.org/extension/3843/just-perfection${RESET}
 - btrfs filesystem optimizations:${YELLOW}https://mutschler.eu/linux/install-guides/fedora-post-install/#btrfs-filesystem-optimizations${RESET}
 
 Please reboot 🚀
