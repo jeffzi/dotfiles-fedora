@@ -287,7 +287,7 @@ flatpak uninstall -y --noninteractive --unused
 echo "${BOLD}${CYAN}Installing Snap packages...${RESET}"
 dnf install -y snapd
 ln -sf /var/lib/snapd/snap /snap
-
+systemctl restart snapd.seeded.service
 for package in "${snap_packages[@]}"
 do
    snap install "$package" --classic
