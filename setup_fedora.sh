@@ -118,7 +118,6 @@ dnf_packages=(
     picom
     ripgrep
     rofi
-    rsms-inter-fonts
     rstudio
     thunar
     thunar-archive-plugin
@@ -329,7 +328,7 @@ echo "${BOLD}${CYAN}Setting up python environment...${RESET}"
 sudo -i -u $git_username bash << EOF
 # install pyenv
 curl https://pyenv.run | bash
-
+exec $SHELL
 # install recent python versions
 pyenv install --list | grep " 3.7" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv install -v
@@ -371,7 +370,8 @@ git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /tmp/nerd-fonts
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh Hack
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh FiraCode
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh SourceCodePro
-dnf -y install msttcore-fonts-installer
+dnf -y install curl cabextract xorg-x11-font-utils fontconfig rsms-inter-fonts
+rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
 
 #==============================================================================
 # misc
