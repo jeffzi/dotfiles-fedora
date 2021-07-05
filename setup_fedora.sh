@@ -123,7 +123,6 @@ dnf_packages=(
     thunar-archive-plugin
     thunar-volman
     tldr
-    tuned
     unrar
     vlc
 )
@@ -317,7 +316,7 @@ dnf -y install insync
 # set fish shell as default
 #==============================================================================
 echo "${BOLD}${CYAN}Setting up fish shell...${RESET}"
-dnf install -y fish util-linux-user
+dnf install -y fish util-linux-user starship
 chsh -s /usr/bin/fish
 
 #==============================================================================
@@ -365,13 +364,14 @@ dnf -y install aws-cli-2
 #==============================================================================
 echo "${BOLD}${CYAN}Installing fonts...${RESET}"
 
+dnf -y install curl cabextract xorg-x11-font-utils fontconfig rsms-inter-fonts
+rpm -ivh --force https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
+
 rm -rf /tmp/nerd-fonts
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /tmp/nerd-fonts
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh Hack
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh FiraCode
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh SourceCodePro
-dnf -y install curl cabextract xorg-x11-font-utils fontconfig rsms-inter-fonts
-rpm -i https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
 
 #==============================================================================
 # misc
@@ -381,6 +381,7 @@ echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
 #==============================================================================
 # Set performance profile
 #==============================================================================
+dnf -y install tuned
 systemctl enable --now tuned
 tuned-adm profile desktop
 
