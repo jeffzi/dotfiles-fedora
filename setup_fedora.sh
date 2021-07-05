@@ -425,10 +425,9 @@ cat <<EOF
 =============================================================================
 Congratulations, everything is set up ! ✨ 🍰 ✨
 
-Non-automasided tasks:${YELLOW}
-- gnome-extensions: ${YELLOW}https://extensions.gnome.org/extension/3843/just-perfection/
-- btrfs filesystem optimizations: https://mutschler.eu/linux/install-guides/fedora-post-install/#btrfs-filesystem-optimizations
-${RESET}
+Non-automated tasks:
+- gnome-extensions: ${YELLOW}https://extensions.gnome.org/extension/3843/just-perfection/${RESET}
+- btrfs filesystem optimizations:${YELLOW}https://mutschler.eu/linux/install-guides/fedora-post-install/#btrfs-filesystem-optimizations${RESET}
 
 Please reboot 🚀
 =============================================================================
