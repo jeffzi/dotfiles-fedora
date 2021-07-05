@@ -3,3 +3,4 @@
 !*/
 !.config/*/
 !.config/*/*
+!setup_fedora.sh
