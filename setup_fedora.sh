@@ -29,7 +29,6 @@ git_username='jeffzi'
 # common packages to install/remove
 #==============================================================================
 remove_packages=(
-
     *hangul*
     *kkc*
     *libvirt*
@@ -128,6 +127,7 @@ dnf_packages=(
 )
 
 flathub_packages=(
+    com.axosoft.GitKraken
     com.jetbrains.DataGrip
     com.skype.Client
     com.slack.Slack
@@ -135,7 +135,6 @@ flathub_packages=(
 )
 
 snap_packages=(
-    gitkraken
     task
 )
 
@@ -262,7 +261,7 @@ flatpak update -y --noninteractive
 # install packages
 #==============================================================================
 echo "${BOLD}${CYAN}Removing unwanted programs...${RESET}"
-# dnf -y remove "${remove_packages[@]}"
+dnf -y remove "${remove_packages[@]}"
 
 echo "${BOLD}${CYAN}Updating Fedora...${RESET}"
 dnf clean all
@@ -422,12 +421,12 @@ echo "${BOLD}${CYAN}Setting up qtile...${RESET}"
 
 # install qtile
 sudo -i -u $git_username <<EOF
-pyenv virtualenv-delete -f qtile
-pyenv install --list | grep " 3.9" | tail -1 | xargs -I % pyenv virtualenv % qtile
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+pyenv virtualenv-delete -f qtile
+pyenv install --list | grep " 3.9" | tail -1 | xargs -I % pyenv virtualenv % qtile
 pyenv activate qtile
-pip install dbus-next psutil qtilecat
+pip install dbus-next psutil qtile
 pyenv deactivate
 EOF
 
