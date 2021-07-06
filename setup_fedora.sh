@@ -323,6 +323,19 @@ chsh -s /usr/bin/fish $git_username
 #==============================================================================
 echo "${BOLD}${CYAN}Setting up python environment...${RESET}"
 
+# install python dependencies
+dnf -y install \
+    make \
+    gcc \
+    zlib-devel \
+    bzip2 bzip2-devel \
+    readline-devel \
+    sqlite sqlite-devel \
+    openssl-devel \
+    tk-devel \
+    libffi-devel \
+    xz-devel
+
 sudo -i -u $git_username bash << EOF
 # install pyenv
 curl https://pyenv.run | bash
