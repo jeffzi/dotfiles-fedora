@@ -116,7 +116,6 @@ dnf_packages=(
     p7zip-plugins
     picom
     ripgrep
-    rofi
     rstudio
     thunar
     thunar-archive-plugin
@@ -319,6 +318,13 @@ dnf install -y fish util-linux-user starship
 chsh -s /usr/bin/fish $git_username
 
 #==============================================================================
+# Install the Development and build tools 
+#==============================================================================
+echo "${BOLD}${CYAN}Install the Development and build tools...${RESET}"
+dnf -y groupinstall "Development Tools" "Development Libraries"
+dnf -y install cmake gcc-c++
+
+#==============================================================================
 # setup python
 #==============================================================================
 echo "${BOLD}${CYAN}Setting up python environment...${RESET}"
@@ -452,6 +458,58 @@ Exec=qtile start
 Type=Application
 Keywords=wm;tiling
 EOF
+
+#==============================================================================
+# setup rofi
+#==============================================================================
+
+dnf -y install rofi rofimoji rofi-devel qalculate libqalculate-devel libtool
+
+# install rofi-calc
+rm -rf /tmp/rofi-calc
+git clone https://github.com/svenstaro/rofi-calc.git /tmp/rofi-calc
+pushd /tmp/rofi-calc
+autoreconf -i
+mkdir build
+cd build/
+../configure
+make
+make install
+popd
+libtool --finish /usr/lib64/rofi/
+
+# install rofi-blocks
+dnf -y install json-glib-devel 
+rm -rf /tmp/rofi-blocks
+git clone https://github.com/OmarCastro/rofi-blocks.git /tmp/rofi-blocks
+pushd /tmp/rofi-blocks
+autoreconf -i
+mkdir build
+cd build/
+../configure
+make
+make install
+popd
+libtool --finish /usr/lib64/rofi/
+
+# install rofi-top
+dnf -y install libgtop2-devel
+rm -rf /tmp/rofi-top
+git clone https://gitcrate.org/qtools/rofi-top /tmp/rofi-top
+pushd /tmp/rofi-top
+autoreconf -i
+mkdir build
+cd build/
+../configure
+make
+make install
+popd
+libtool --finish /usr/lib64/rofi/
+
+# install rofi-search
+dnf -y install googler
+npm install -g rofi-search
+
 
 #==============================================================================
 # done

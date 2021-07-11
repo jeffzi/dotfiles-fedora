@@ -1,0 +1,4 @@
+dir "~"
+sort-by-type enabled
+show-hidden enabled
+hide-hidden-symbol ""

@@ -1,0 +1,109 @@
+configuration {
+    font: "FiraCode Nerd Font 14";
+    show-icons: true;
+    icon-theme: "Papirus";
+    display-drun: "";
+    drun-display-format: "{name}";
+    disable-history: false;
+    fullscreen: false;
+    hide-scrollbar: true;
+    sidebar-mode: false;
+}
+
+* {
+  alpha: #00000000;
+  list-bg: #1a1a1a;
+  selection: #303030;
+  text: #FFFFFF;
+  window-bg: #000000;
+}
+
+window {
+    transparency: "real";
+    background-color: @list-bg;
+    text-color: @text;
+    border: 10px;
+    border-color: @window-bg;
+    border-radius: 12px;
+    width: 20%;
+}
+
+mainbox {
+    background-color: @alpha;
+    border-color: @window-bg;
+
+}
+
+inputbar {
+    children: [ prompt, entry ];
+    background-color: @window-bg;
+    text-color: @list-bg;
+    expand: false;
+    border-color: @window-bg;
+    padding: 1.5%;
+}
+
+prompt {
+    enabled: true;
+    padding: 0% 1% 0% -1%;
+    background-color: @alpha;
+    text-color: @text;
+}
+
+entry {
+    background-color: @alpha;
+    text-color: @text;
+    placeholder-color: @text;
+    expand: true;
+    placeholder: "";
+    blink: true;
+}
+
+message {
+    border-radius: 5px 5px 0% 0%;
+    background-color: white;
+    text-color: black;
+    padding: 4px;
+    expand: false;
+    color: black;
+}
+
+textbox {
+    text-color: @fg;
+    padding: 10px 50px 10px 50px;
+}
+
+listview {
+    background-color: @alpha;
+    columns: 1;
+    lines: 5;
+    cycle: false;
+    dynamic: true;
+    layout: vertical;
+}
+
+element {
+    background-color: @alpha;
+    text-color: @text;
+    orientation: horizontal;
+    padding: 1% 0.5% 1% 0.5%;
+}
+
+element-icon {
+    size: 48px;
+    border: 0px;
+}
+
+element-text {
+    expand: true;
+    vertical-align: 0.5;
+    margin: 0% 0.25% 0% 0.25%;
+}
+
+element selected {
+    background-color: @selection;
+    text-color: @text;
+    border: 0.5% 0.25% 0.5% 0.25%;
+    border-radius: 12px;
+    border-color: @list-bg;
+}
