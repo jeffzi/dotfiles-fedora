@@ -20,13 +20,17 @@ set -gx XDG_DATA_DIRS /var/lib/snapd/desktop/:$XDG_DATA_DIRS
 set PATH $PATH /var/lib/snapd/snap/bin
 
 # https://github.com/oh-my-fish/plugin-pj
-set -gx PROJECT_PATHS ~/Projects ~/Projects/dev ~/Projects/work/metamoki ~/Projects/work/metamoki/DataArchive/projects
+set -gx PROJECT_PATHS ~/Projects ~/Projects/dev ~/Projects/work/metamoki ~/Projects/work/metamoki/DataArchive/projects ~/Projects/work/metamoki/DataArchive/libs
 abbr -a pjo pj open
 
 # pyenv init
-set PATH $PATH $HOME/.pyenv/bin
+set -gx PATH $PATH $HOME/.pyenv/bin
 status is-login; and pyenv init --path | source
 pyenv init - | source
+
+# go
+set -gx GOPATH $HOME/go
+set -gx PATH $PATH $GOPATH/bin
 
 # theme
 base16-material-darker
