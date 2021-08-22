@@ -6,6 +6,12 @@ import os
 from . import theme
 from .mouse import LEFT
 
+
+def _strip_app_name(txt: str) -> str:
+    shortened = " - ".join(txt.split(" - ")[:-1])
+    return shortened or txt
+
+
 widgets = [
     widget.CurrentLayoutIcon(
         padding=0,
@@ -38,6 +44,7 @@ widgets = [
         ),
         markup_focused=f'<span foreground="{theme.FOCUSED_COLOR}">{{}}</span>',
         max_title_width=512,
+        parse_text=_strip_app_name,
         unfocused_border=theme.DARK_GREY,
         urgent_border=theme.URGENT_COLOR,
     ),
