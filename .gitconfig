@@ -1,0 +1,15 @@
+[user]
+	name = jeffzi
+	email = jzinque@gmail.com
+[core]
+  editor = code --wait
+[diff]
+  tool = vscode
+[difftool "vscode"]
+  cmd = code --wait --diff --new-window $LOCAL $REMOTE
+[merge]
+  tool = vscode
+[mergetool "vscode"]
+  cmd = code --wait --new-window $MERGED
+[credential]
+	helper = store

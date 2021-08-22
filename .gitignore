@@ -1,6 +1,9 @@
-*
-!.gitignore
-!*/
+!.config/*
 !.config/*/
 !.config/*/*
+!.gitconfig
+!.gitignore
+!*/
+!README.md
 !setup_fedora.sh
+*
