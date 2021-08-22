@@ -87,6 +87,7 @@ dnf_packages=(
     bat
     baobab
     code
+    copyq
     fedora-workstation-repositories
     ffmpeg
     flameshot
@@ -260,7 +261,7 @@ flatpak update -y --noninteractive
 # install packages
 #==============================================================================
 echo "${BOLD}${CYAN}Removing unwanted programs...${RESET}"
-dnf -y remove "${remove_packages[@]}"
+dnf -y --skip-broken remove "${remove_packages[@]}"
 
 echo "${BOLD}${CYAN}Updating Fedora...${RESET}"
 dnf clean all
@@ -274,7 +275,7 @@ dnf -y --best --allowerasing install xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidi
 dnf -y --best --allowerasing install vdpauinfo libva-vdpau-driver libva-utils
 
 echo "${BOLD}${CYAN}Installing packages...${RESET}"
-dnf -y --best --allowerasing install "${dnf_packages[@]}"
+dnf -y --best install "${dnf_packages[@]}"
 
 echo "${BOLD}${CYAN}Installing flathub packages...${RESET}"
 flatpak install -y --noninteractive flathub "${flathub_packages[@]}"
@@ -368,14 +369,16 @@ echo "${BOLD}${CYAN}Setting up docker...${RESET}"
 dnf -y install moby-engine
 # Start & enable Docker daemon
 systemctl enable --now docker.service
-
+groupadd docker || true
+usermod -aG docker $git_username
 #==============================================================================
-# setup aws-cli-2
+# setup aws tools
 #==============================================================================
-echo "${BOLD}${CYAN}Installing aws-cli-2...${RESET}"
+echo "${BOLD}${CYAN}Installing aws tools...${RESET}"
 
 dnf -y copr enable spot/aws-cli-2
-dnf -y install aws-cli-2
+dnf -y install aws-cli-2 golang
+go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
 
 #==============================================================================
 # install fonts
@@ -406,16 +409,16 @@ tuned-adm profile desktop
 #==============================================================================
 # setup gnome desktop
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up Gnome theme...${RESET}"
+echo "${BOLD}${CYAN}Setting up Gnome desktop...${RESET}"
 
 # install dependencies
-dnf -y install gnome-themes-extra gtk-murrine-engine
+dnf -y install gnome-themes-extra gtk-murrine-engine sassc
 # install gtk theme
-rm -rf /tmp/Orchis-theme
+rm -rf /tmp/Qogir-theme
 git clone https://github.com/vinceliuice/Orchis-theme.git /tmp/Orchis-theme
-sudo -i -u $git_username bash /tmp/Orchis-theme/install.sh --theme default
+sudo -i -u $git_username bash /tmp/Orchis-theme/install.sh
 
-# install icon theme
+\\# install icon theme
 sudo -i -u $git_username wget -qO- https://git.io/papirus-icon-theme-install | sh
 
 # set up themes
@@ -434,20 +437,30 @@ gsettings set org.gnome.desktop.wm.preferences button-layout 'appmenu:minimize,m
 gsettings set org.gtk.Settings.FileChooser sort-directories-first true
 
 #==============================================================================
+# setup KDE theme
+#==============================================================================
+echo "${BOLD}${CYAN}Setting up KDE theme...${RESET}"
+# install qt theme engine
+dnf -y install kvantum
+# install qt theme
+rm -rf /tmp/Orchis-kde
+git clone https://github.com/vinceliuice/Qogir-kde.git /tmp/Qogir-kde
+sudo -i -u $git_username bash /tmp/Qogir-theme/install.sh
+sudo -i -u $git_username kvantummanager --set "Qogir-dark"
+
+#==============================================================================
 # setup qtile
 #==============================================================================
 echo "${BOLD}${CYAN}Setting up qtile...${RESET}"
 
+# needed for audio control
+dnf -y install pulseaudio-utils pavucontrol
+
 # install qtile
-sudo -i -u $git_username <<EOF
-eval "$(pyenv init -)"
-eval "$(pyenv virtualenv-init -)"
-pyenv virtualenv-delete -f qtile
-pyenv install --list | grep " 3.9" | tail -1 | xargs -I % pyenv virtualenv % qtile
-pyenv activate qtile
+pip install xcffib
+pip install --upgrade --force-reinstall --no-cache-dir cairocffi[xcb]
 pip install dbus-next psutil qtile
-pyenv deactivate
-EOF
+
 
 # add qtile session
 cat <<EOF > /usr/share/xsessions/qtile.desktop
@@ -462,6 +475,7 @@ EOF
 #==============================================================================
 # setup rofi
 #==============================================================================
+echo "${BOLD}${CYAN}Setting up rofi...${RESET}"
 
 dnf -y install rofi rofimoji rofi-devel qalculate libqalculate-devel libtool
 
@@ -509,6 +523,37 @@ libtool --finish /usr/lib64/rofi/
 # install rofi-search
 dnf -y install googler
 npm install -g rofi-search
+
+#==============================================================================
+# fixing nvidia screen tearning
+#==============================================================================
+# https://wiki.archlinux.org/title/NVIDIA/Troubleshooting#Avoid_screen_tearing
+mkdir -p /etc/X11/xorg.conf.d/
+cat <<EOF > /etc/X11/xorg.conf.d/20-nvidia.conf
+Section "Device"
+    Identifier     "Device0"
+    Driver         "nvidia"
+    VendorName     "NVIDIA Corporation"
+    BoardName      "NVIDIA GeForce GTX 970"
+EndSection
+
+Section "Screen"
+    Identifier     "Screen0"
+    Device         "Device0"
+    Monitor        "Monitor0"
+    DefaultDepth    24
+    Option         "Stereo" "0"
+    Option         "metamodes" "nvidia-auto-select +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On}"
+    Option         "AllowIndirectGLXProtocol" "off"
+    Option         "TripleBuffer" "on"
+    Option         "SLI" "Off"
+    Option         "MultiGPU" "Off"
+    Option         "BaseMosaic" "off"
+    SubSection     "Display"
+        Depth       24
+    EndSubSection
+EndSection
+EOF
 
 #==============================================================================
 # done

@@ -2,8 +2,10 @@ function ...
     cd ../..
 end
 
-# default editor
+# default editorf
 set -gx EDITOR /usr/bin/code
+# qt apps
+set -x QT_STYLE_OVERRIDE kvantum
 
 # flatpak
 set -l xdg_data_home $XDG_DATA_HOME ~/.local/share
