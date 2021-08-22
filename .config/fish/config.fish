@@ -2,7 +2,7 @@ function ...
     cd ../..
 end
 
-# default editorf
+# default editor
 set -gx EDITOR /usr/bin/code
 # qt apps
 set -x QT_STYLE_OVERRIDE kvantum
