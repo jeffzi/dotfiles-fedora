@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "qtile-config"
+version = "0.1.0"
+description = "jeffzi personal qtile config"
+authors = ["Jean-Francois Zinque <jzinque@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.9"
+qtile = { git = "https://github.com/qtile/qtile.git" }
+typer = "^0.3.2"
+pre-commit = "^2.13.0"
+dbus-next = "^0.2.2"
+psutil = "^5.8.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.black]
+line-length = 88
+target-version = ['py37', 'py38', 'py39']
+include = '\.pyi?$'
