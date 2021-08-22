@@ -2,12 +2,17 @@
 from libqtile import qtile, widget
 from libqtile.bar import Bar
 from libqtile.config import Screen
-
+import os
 from . import theme
 from .mouse import LEFT
 
 widgets = [
-    widget.CurrentLayoutIcon(padding=0, scale=0.7, foreground=theme.FOCUSED_COLOR),
+    widget.CurrentLayoutIcon(
+        padding=0,
+        scale=0.7,
+        foreground=theme.FOCUSED_COLOR,
+        custom_icon_paths=[os.path.expanduser("~/.config/qtile/icons")],
+    ),
     widget.GroupBox(
         active=theme.WHITE,
         block_highlight_text_color=theme.FOCUSED_COLOR,
