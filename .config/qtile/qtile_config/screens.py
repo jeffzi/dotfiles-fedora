@@ -1,10 +1,14 @@
 """Define qtile screens."""
+import os
+
 from libqtile import qtile, widget
 from libqtile.bar import Bar
 from libqtile.config import Screen
-import os
+
 from . import theme
 from .mouse import LEFT
+from .widgets.cpu import ColoredCPU
+from .widgets.memory import ColoredMemory
 
 
 def _strip_app_name(txt: str) -> str:
@@ -59,31 +63,21 @@ widgets = [
         stop_pause_text="",
     ),
     widget.Systray(),
-    widget.Pomodoro(
-        color_active=theme.FOCUSED_COLOR,
-        color_break=theme.URGENT_COLOR,
-        color_inactive=theme.UNFOCUSED_COLOR,
-        font=theme.FONT,
-        prefix_active=" ",
-        prefix_break=" ",
-        prefix_inactive="",
-        prefix_long_break="",
-        prefix_paused="",
-    ),
     widget.Sep(size_percent=60, linewidth=2, padding=10),
-    widget.Memory(
-        padding=10,
+    widget.TextBox(text="﬙", foreground=theme.BLUE),
+    ColoredCPU(
+        foreground_alert=theme.URGENT_COLOR,
+        format="{load_percent}%",
+        mouse_callbacks={LEFT: lambda: qtile.cmd_spawn("kitty -e htop")},
+        padding=0,
+    ),
+    widget.TextBox(text="", foreground=theme.BLUE),
+    ColoredMemory(
+        foreground_alert=theme.URGENT_COLOR,
         format="{MemUsed:.1f}GB",
         measure_mem="G",
         mouse_callbacks={LEFT: lambda: qtile.cmd_spawn("kitty -e htop")},
-    ),
-    widget.CPU(
-        format="{load_percent}%",
-        mouse_callbacks={LEFT: lambda: qtile.cmd_spawn("kitty -e htop")},
-    ),
-    widget.NvidiaSensors(
-        format="{perf}",
-        mouse_callbacks={LEFT: lambda: qtile.cmd_spawn("nvidia-settings")},
+        padding=0,
     ),
 ]
 
