@@ -18,16 +18,16 @@ format = '[\($branch\)]($style)'
 [git_status]
 conflicted = "✘"
 deleted = "✝"
+format = '([\[$all_status$ahead_behind\]]($style) )'
 staged = "✚"
 stashed = "⚑"
 style = "bold purple"
-format = '([\[$all_status$ahead_behind\]]($style) )'
 
 [time]
-time_format = "%Y-%m-%d %T"
+disabled = false
 format = "$time($style) "
 style = "dimmed"
-disabled = false
+time_format = "%Y-%m-%d %T"
 
 [aws]
 disabled = true
