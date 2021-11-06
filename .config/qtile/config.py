@@ -45,8 +45,6 @@ async def _spawn_in_group(cmd: str, window_name: str, group_name: str) -> None:
 
 @hook.subscribe.startup_complete
 async def _start_chrome_metamoki():
-    with open(os.path.expanduser("~/qtile.log"), "wt") as f:
-        f.write(str("~/.config/qtile/chrome_profile.sh jeffzi".split()))
     await _spawn_in_group(
         cmd="~/.config/qtile/chrome_profile.sh jeffzi",
         group_name="WWW",

@@ -56,7 +56,7 @@ keys = [
     Key([], "XF86AudioPlay", lazy.spawn(MEDIA_CMD + "PlayPause")),
     Key([], "XF86AudioNext", lazy.function(_next_prev("Next"))),
     Key([], "XF86AudioPrev", lazy.function(_next_prev("Previous"))),
-    Key([MOD], "Tab", lazy.next_layout(), desc="Toggle through layouts"),
+    Key([MOD], TAB, lazy.next_layout(), desc="Toggle through layouts"),
     # qtile
     Key([MOD, SHIFT], "r", lazy.restart(), desc="Restart Qtile"),
     Key([MOD, SHIFT], "q", lazy.shutdown(), desc="Shutdown Qtile"),
@@ -81,22 +81,22 @@ keys = [
     Key([MOD], DOWN, lazy.layout.down(), desc="Move focus down"),
     Key([MOD], UP, lazy.layout.up(), desc="Move focus up"),
     Key(
-        [MOD, "shift"], LEFT, lazy.layout.shuffle_left(), desc="Move window to the left"
+        [MOD, SHIFT], LEFT, lazy.layout.shuffle_left(), desc="Move window to the left"
     ),
     Key(
-        [MOD, "shift"],
+        [MOD, SHIFT],
         RIGHT,
         lazy.layout.shuffle_right(),
         desc="Move window to the right",
     ),
     Key(
-        [MOD, "shift"],
+        [MOD, SHIFT],
         DOWN,
         lazy.layout.shuffle_down(),
         desc="Move window down",
     ),
     Key(
-        [MOD, "shift"],
+        [MOD, SHIFT],
         UP,
         lazy.layout.shuffle_up(),
         desc="Move window up",
@@ -138,7 +138,7 @@ keys = [
     # Stack controls
     Key(
         [MOD, SHIFT],
-        "space",
+        SPACE,
         lazy.layout.toggle_split(),
         desc="Toggle between split and unsplit sides of stack",
     ),
