@@ -43,4 +43,5 @@ format = '[${symbol}${pyenv_prefix}(${version} )(\($virtualenv\))]($style)'
 symbol = "py "
 
 [rlang]
+format = "[$symbol($version )]($style)"
 symbol = "R "
