@@ -23,11 +23,6 @@ stashed = "⚑"
 style = "bold purple"
 format = '([\[$all_status$ahead_behind\]]($style) )'
 
-[status]
-disabled = false
-format = '[\[$status - $common_meaning\]]($style)'
-style = "red"
-
 [time]
 time_format = "%Y-%m-%d %T"
 format = "$time($style) "
