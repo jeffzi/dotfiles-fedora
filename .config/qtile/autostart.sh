@@ -12,4 +12,4 @@ run picom --experimental-backends
 run copyq
 run flameshot
 run feh --bg-center ~/.config/wallpapers/astronaut_jellyfish.jpg
-run insync start
+run blueman-applet
