@@ -9,7 +9,8 @@ function run {
 
 run /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1
 run picom --experimental-backends
+run feh --bg-center ~/.config/wallpapers/astronaut_jellyfish.jpg
+run dunst -config ~/.config/dunst/dunstrc
 run copyq
 run flameshot
-run feh --bg-center ~/.config/wallpapers/astronaut_jellyfish.jpg
 run blueman-applet
