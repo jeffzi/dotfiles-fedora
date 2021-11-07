@@ -1,109 +1,119 @@
 configuration {
-    font: "FiraCode Nerd Font 14";
-    show-icons: true;
-    icon-theme: "Papirus";
+    disable-history: false;
     display-drun: "";
     drun-display-format: "{name}";
-    disable-history: false;
+    font: "FiraCode Nerd Font 14";
     fullscreen: false;
     hide-scrollbar: true;
+    icon-theme: "Papirus";
+    show-icons: true;
     sidebar-mode: false;
 }
 
 * {
-  alpha: #00000000;
-  list-bg: #1a1a1a;
+  window-bg: #1a1a1a;
   selection: #303030;
   text: #FFFFFF;
-  window-bg: #000000;
+  border: #000000;
 }
 
 window {
-    transparency: "real";
-    background-color: @list-bg;
+    background-color: @window-bg;
+    border-color: @border;
+    border-radius: 10px;
+    border: 4px;
     text-color: @text;
-    border: 10px;
-    border-color: @window-bg;
-    border-radius: 12px;
+    transparency: "real";
     width: 20%;
 }
 
 mainbox {
-    background-color: @alpha;
-    border-color: @window-bg;
-
+    background-color: @window-bg;
+    border-color: @border;
+    padding: 1% 1% 2% 1%;
 }
 
 inputbar {
-    children: [ prompt, entry ];
     background-color: @window-bg;
-    text-color: @list-bg;
+    border-color: @border;
+    children: [ prompt, entry ];
     expand: false;
-    border-color: @window-bg;
-    padding: 1.5%;
+    padding: 1% 0% 1% 0%;
+    spacing: 0.5%;
+    text-color: @window-bg;
 }
 
 prompt {
+    border: 2px;
+    background-color: @selection;
+    border-color: @border;
+    border-radius: 10px;
     enabled: true;
-    padding: 0% 1% 0% -1%;
-    background-color: @alpha;
+    padding: 0.5% 0.75% 0.5% 0.5%;
     text-color: @text;
+    vertical-align: 0.5;
+    
 }
 
 entry {
-    background-color: @alpha;
-    text-color: @text;
-    placeholder-color: @text;
-    expand: true;
-    placeholder: "";
+    background-color: @selection;
     blink: true;
+    border-color: @border;
+    border-radius: 10px;
+    border: 2px;
+    expand: true;
+    padding: 1%;
+    placeholder-color: @text;
+    placeholder: "";
+    text-color: @text;
 }
 
 message {
-    border-radius: 5px 5px 0% 0%;
-    background-color: white;
-    text-color: black;
-    padding: 4px;
+    background-color: @selection;
+    border-radius: 10px;
+    color: @text;
     expand: false;
-    color: black;
+    padding: 4px;
+    text-color: @text;
 }
 
 textbox {
-    text-color: @fg;
     padding: 10px 50px 10px 50px;
+    text-color: @fg;
 }
 
 listview {
-    background-color: @alpha;
+    background-color: @window-bg;
     columns: 1;
-    lines: 5;
     cycle: false;
     dynamic: true;
     layout: vertical;
+    lines: 5;
 }
 
 element {
-    background-color: @alpha;
-    text-color: @text;
+    background-color: @window-bg;
     orientation: horizontal;
     padding: 1% 0.5% 1% 0.5%;
+    text-color: @text;
 }
 
 element-icon {
-    size: 48px;
     border: 0px;
+    size: 48px;
 }
 
 element-text {
     expand: true;
-    vertical-align: 0.5;
     margin: 0% 0.25% 0% 0.25%;
+    vertical-align: 0.5;
 }
 
 element selected {
     background-color: @selection;
-    text-color: @text;
+    border-color: @border;
+    border-radius: 10px;
     border: 0.5% 0.25% 0.5% 0.25%;
-    border-radius: 12px;
-    border-color: @list-bg;
+    border: 2px;
+    text-color: @text;
 }
