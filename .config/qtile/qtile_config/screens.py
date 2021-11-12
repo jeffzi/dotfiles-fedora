@@ -39,8 +39,7 @@ widgets = [
     widget.TaskList(
         border=theme.FOCUSED_COLOR,
         borderwidth=1,
-        font=theme.FONT,
-        icon_size=0,
+        font="SauceCodePro Nerd Font",
         margin=1,
         markup_normal=(
             f'<span foreground="{theme.UNFOCUSED_COLOR}" '
@@ -55,7 +54,6 @@ widgets = [
     widget.Clock(format="%B %d ~ %H:%M"),
     widget.Spacer(),
     widget.Mpris2(
-        font=theme.FONT,
         name="spotify",
         objname="org.mpris.MediaPlayer2.spotify",
         display_metadata=["xesam:artist", "xesam:title"],

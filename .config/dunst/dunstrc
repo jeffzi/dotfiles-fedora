@@ -20,7 +20,7 @@
     transparency = 5
 
     ### Text ###
-    font = FiraCode Nerd Font 10
+    font = FiraCode Nerd Font, Medium 10
     markup = full
 
     # The format of the message.  Possible variables are:

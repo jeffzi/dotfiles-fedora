@@ -19,9 +19,9 @@ FOCUSED_COLOR = YELLOW
 UNFOCUSED_COLOR = GREY
 URGENT_COLOR = RED
 
-DEFAULT_FONT = "FiraCode Nerd Font"
 
-FONT = DEFAULT_FONT
+FONT = "FiraCode Nerd Font, Medium"
+FONT_SIZE = 21
 BAR_SIZE: int = 30
 
 LAYOUT_DEFAULTS = {
@@ -31,8 +31,9 @@ LAYOUT_DEFAULTS = {
 }
 
 widget_defaults = {
-    "font": DEFAULT_FONT,
-    "fontsize": 20,
+    "font": FONT,
+    "fontsize": FONT_SIZE,
+    "icon_size": FONT_SIZE,
     "foreground": WHITE,
     "background": BG,
 }

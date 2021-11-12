@@ -2,7 +2,7 @@ configuration {
     disable-history: false;
     display-drun: "";
     drun-display-format: "{name}";
-    font: "FiraCode Nerd Font 14";
+    font: "FiraCode Nerd Font, Medium 14";
     fullscreen: false;
     hide-scrollbar: true;
     icon-theme: "Papirus";
