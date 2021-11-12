@@ -59,7 +59,7 @@ keys = [
     Key([MOD], TAB, lazy.next_layout(), desc="Toggle through layouts"),
     # qtile
     Key([MOD, SHIFT], "r", lazy.restart(), desc="Restart Qtile"),
-    Key([MOD, SHIFT], "q", lazy.shutdown(), desc="Shutdown Qtile"),
+    Key([MOD, SHIFT], "k", lazy.shutdown(), desc="Shutdown Qtile"),
     # group controls
     Key([MOD], PAGE_UP, lazy.screen.prev_group(skip_managed=True)),
     Key([MOD], PAGE_DOWN, lazy.screen.next_group(skip_managed=True)),
@@ -80,9 +80,7 @@ keys = [
     Key([MOD], RIGHT, lazy.layout.right(), desc="Move focus to right"),
     Key([MOD], DOWN, lazy.layout.down(), desc="Move focus down"),
     Key([MOD], UP, lazy.layout.up(), desc="Move focus up"),
-    Key(
-        [MOD, SHIFT], LEFT, lazy.layout.shuffle_left(), desc="Move window to the left"
-    ),
+    Key([MOD, SHIFT], LEFT, lazy.layout.shuffle_left(), desc="Move window to the left"),
     Key(
         [MOD, SHIFT],
         RIGHT,
