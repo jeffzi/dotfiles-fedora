@@ -106,6 +106,9 @@ __pycache__
 !/.config/
 !/.config/dunst/*
 !/.config/fish/**
+!/.config/gtk-2.0/*
+!/.config/gtk-3.0/*
+!/.config/gtk-4.0/*
 !/.config/kitty/*
 !/.config/qtile/**
 !/.config/rofi/*
