@@ -119,6 +119,7 @@ __pycache__
 !/.Xresources
 !/README.md
 !/setup_fedora.sh
+.history
 .python-version
 .venv
 *.py[cod]
