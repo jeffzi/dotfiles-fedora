@@ -1,33 +1,11 @@
 #!/bin/bash
 
-# modified from https://github.com/David-Else/fedora-ultimate-setup-script
-
-#==============================================================================
-# script settings and checks
-#==============================================================================
-set -eo pipefail
-exec 2> >(tee "error_log_$(date -Iseconds).txt")
-
-RED=$(tput setaf 1)
-GREEN=$(tput setaf 2)
-YELLOW=$(tput setaf 3)
-CYAN=$(tput setaf 6)
-BOLD=$(tput bold)
-RESET=$(tput sgr0)
-
-if [ "$(id -u)" != 0 ]; then
-    echo "You're not root! Run script with sudo" && exit 1
-fi
-
-#==============================================================================
-# git settings
-#==============================================================================
-git_email='jzinque@gmail.com'
-git_username='jeffzi'
+# modified from https://github.com/David-Else/developer-workstation-setup-script
 
 #==============================================================================
 # common packages to install/remove
 #==============================================================================
+
 remove_packages=(
     *hangul*
     *kkc*
@@ -37,7 +15,6 @@ remove_packages=(
     *speech*
     abrt
     cheese
-    f34-backgrounds-gnome
     fedora-bookmarks
     fedora-chromium-config
     fedora-workstation-backgrounds
@@ -84,10 +61,11 @@ remove_packages=(
 )
 
 dnf_packages=(
-    bat
     baobab
+    bat
     code
     copyq
+    dunst
     fedora-workstation-repositories
     ffmpeg
     flameshot
@@ -115,6 +93,7 @@ dnf_packages=(
     nodejs
     p7zip
     p7zip-plugins
+    pandoc
     picom
     ripgrep
     rstudio
@@ -145,20 +124,58 @@ npm_packages=(
 )
 
 #==============================================================================
-# display user settings
+# script settings and checks
 #==============================================================================
-read -rp "What is this computer's name? [$HOSTNAME] " hostname
 
-cat <<EOF
+source /etc/os-release
+
+RED=$(tput setaf 1)
+GREEN=$(tput setaf 2)
+YELLOW=$(tput setaf 3)
+CYAN=$(tput setaf 6)
+BOLD=$(tput bold)
+RESET=$(tput sgr0)
+
+BIN_INSTALL_DIR=/usr/local/bin
+
+if [ "$(id -u)" != 0 ]; then
+    echo "You're not root! Run script with sudo" && exit 1
+fi
+
+exec 2> >(tee "error_log_$(date -Iseconds).txt")
+
+info() {
+    echo -e "${BOLD}${CYAN}$1${RESET}"
+}
+
+success() {
+    echo -e "${GREEN}$1${RESET}"
+}
+
+# Call with arguments (${1} path,${2} line to add)
+add_to_file() {
+    touch "$1"
+    grep -qxF "$2" "$1" || echo "$2" >>"$1"
+}
+
+# Call with arguments ${1} github_user/repo, ${2} asset_name
+download_latest_github_release() {
+    local endpoint="https://api.github.com/repos/${1}/releases/latest"
+    curl -s $endpoint \
+        | grep -oP '"browser_download_url": "\K(.*)(?=")' \
+        | grep ${2} \
+        | wget -qi -
+
+    local filename=$(curl -s $endpoint | grep -oP '"name": "\K(.*)(?=")' | grep ${2})
+    
+    echo ${filename}
+}
+
+display_user_settings_and_prompt() {
+    clear
+    cat <<EOL
 ===============================================================================
-${BOLD}Hostname${RESET}
-${BOLD}-------------------${RESET}
-${GREEN}$HOSTNAME${RESET}
-
-${BOLD}Git settings${RESET}
-${BOLD}-------------------${RESET}
-Global email: ${GREEN}$git_email${RESET}
-Global user name: ${GREEN}$git_username${RESET}
+${BOLD}${GREEN}$ID $VERSION_ID detected${RESET}
 
 ${BOLD}Packages to install${RESET}
 ${BOLD}-------------------${RESET}
@@ -169,166 +186,161 @@ Flathub packages: ${GREEN}${flathub_packages[*]}${RESET}
 
 Snap packages: ${GREEN}${snap_packages[*]}${RESET}
 
-Node packages: ${GREEN}${npm_packages[*]}${RESET}
+NPM packages: ${GREEN}${npm_packages[*]}${RESET}
 
 ${BOLD}Packages to remove${RESET}
 ${BOLD}------------------${RESET}
-DNF packages: ${GREEN}${remove_packages[*]}${RESET}
+DNF packages: ${RED}${remove_packages[*]}${RESET}
 ===============================================================================
-⚠️ This script is designed to run on a machine with a user named after the ${BOLD}${RED}git user${RESET}: ${YELLOW}$git_username${RESET} ⚠️
-===============================================================================
-EOF
-read -rp "Press ${YELLOW}enter${RESET} to install, or ${YELLOW}ctrl+c${RESET} to quit"
+EOL
+    read -rp "Press ${YELLOW}enter${RESET} to install, or ${YELLOW}ctrl+c${RESET} to quit"
+}
+display_user_settings_and_prompt
 
 #==============================================================================
-# set host name
+# Set host name
 #==============================================================================
 
+read -rp "What is this computer's name? [$HOSTNAME] " hostname
 if [[ ! -z "$hostname" ]]; then
     hostnamectl set-hostname "$hostname"
 fi
 
 #==============================================================================
-# setup git user name and email if none exist
+# Add default and conditional repositories
 #==============================================================================
-sudo -i -u $git_username bash << EOF
-git config --global user.name $git_username
-git config --global user.email $git_email
-EOF
+add_repositories() {
+    info "Adding repositories..."
 
-#==============================================================================
-# add default and conditional repositories
-#==============================================================================
-echo "${BOLD}${CYAN}Adding repositories...${RESET}"
+    dnf -y install \
+        "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
+        "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
 
-# speed up dnf
-cat <<EOF > /etc/dnf/dnf.conf
-[main]
-gpgcheck=1
-installonly_limit=3
-clean_requirements_on_remove=True
-best=False
-skip_if_unavailable=True
-fastestmirror=true
-deltarpm=true
-max_parallel_downloads=10
-EOF
+    # Speed up dnf
+    add_to_file "/etc/dnf/dnf.conf" "[main]"
+    add_to_file "/etc/dnf/dnf.conf" "gpgcheck=1"
+    add_to_file "/etc/dnf/dnf.conf" "installonly_limit=3"
+    add_to_file "/etc/dnf/dnf.conf" "clean_requirements_on_remove=True"
+    add_to_file "/etc/dnf/dnf.conf" "best=False"
+    add_to_file "/etc/dnf/dnf.conf" "skip_if_unavailable=True"
+    add_to_file "/etc/dnf/dnf.conf" "fastestmirror=true"
+    add_to_file "/etc/dnf/dnf.conf" "deltarpm=true"
+    add_to_file "/etc/dnf/dnf.conf" "max_parallel_downloads=10"
 
-dnf -y install \
-    "https://download1.rpmfusion.org/free/fedora/rpmfusion-free-release-$(rpm -E %fedora).noarch.rpm" \
-    "https://download1.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-$(rpm -E %fedora).noarch.rpm"
-# RPM Fusion repositories also provide Appstream metadata to enable users to
-# install packages using Gnome Software/KDE Discover
-dnf -y groupupdate core
-dnf -y install dnf-plugins-core
-# Tainted free is dedicated for FLOSS packages where some usages might be restricted in
-# some countries. Example: to play DVD with libdvdcss
-dnf -y install rpmfusion-free-release-tainted
-# Tainted nonfree is dedicated to non-FLOSS packages without a clear redistribution
-# status by the copyright holder.
-dnf -y install rpmfusion-nonfree-release-tainted
-dnf -y install fedora-workstation-repositories
-dnf -y config-manager --set-enabled google-chrome
-dnf -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
+    # RPM Fusion repositories also provide Appstream metadata to enable users to
+    # install packages using Gnome Software/KDE Discover
+    dnf -y groupupdate core
+    dnf -y install dnf-plugins-core
+    # Tainted free is dedicated for FLOSS packages where some usages might be restricted in
+    # some countries. Example: to play DVD with libdvdcss
+    dnf -y install rpmfusion-free-release-tainted
+    # Tainted nonfree is dedicated to non-FLOSS packages without a clear redistribution
+    # status by the copyright holder.
+    dnf -y install rpmfusion-nonfree-release-tainted
+    dnf -y install fedora-workstation-repositories
+    dnf -y config-manager --set-enabled google-chrome
+    dnf -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
 
-# vscode
-rpm --import https://packages.microsoft.com/keys/microsoft.asc
-cat <<EOF > /etc/yum.repos.d/vscode.repo
-[code]
-name=Visual Studio Code
-baseurl=https://packages.microsoft.com/yumrepos/vscode
-enabled=1
-gpgcheck=1
-gpgkey=https://packages.microsoft.com/keys/microsoft.asc
-EOF
+    # Disable the modular repos
+    sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-updates-modular.repo
+    sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-modular.repo
 
-# Disable the modular repos
-sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-updates-modular.repo
-sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-modular.repo
+    # Testing Repos should be disabled anyways
+    sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-updates-testing-modular.repo
+    sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/rpmfusion-free-updates-testing.repo
 
-# Testing Repos should be disabled anyways
-sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-updates-testing-modular.repo
-sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/rpmfusion-free-updates-testing.repo
+    # rpmfusion makes this obsolete
+    sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-cisco-openh264.repo
 
-# rpmfusion makes this obsolete
-sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/fedora-cisco-openh264.repo
+    rpm --import https://packages.microsoft.com/keys/microsoft.asc
+    add_to_file "/etc/yum.repos.d/vscode.repo" "[code]"
+    add_to_file "/etc/yum.repos.d/vscode.repo" "name=Visual Studio Code"
+    add_to_file "/etc/yum.repos.d/vscode.repo" "baseurl=https://packages.microsoft.com/yumrepos/vscode"
+    add_to_file "/etc/yum.repos.d/vscode.repo" "enabled=1"
+    add_to_file "/etc/yum.repos.d/vscode.repo" "gpgcheck=1"
+    add_to_file "/etc/yum.repos.d/vscode.repo" "gpgkey=https://packages.microsoft.com/keys/microsoft.asc"
+    
+    # GitHub CLI
+    dnf -y config-manager --add-repo https://cli.github.com/packages/rpm/gh-cli.repo
 
-# flatpak
-flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
-flatpak update -y --noninteractive
+    # Flatpak
+    flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+    flatpak update -y --noninteractive
+}
+add_repositories
 
 #==============================================================================
 # install packages
 #==============================================================================
-echo "${BOLD}${CYAN}Removing unwanted programs...${RESET}"
-dnf -y --skip-broken remove "${remove_packages[@]}"
+install_packages() {
+    info "Removing unwanted programs..."
+    dnf -y --skip-broken remove "${remove_packages[@]}"
 
-echo "${BOLD}${CYAN}Updating Fedora...${RESET}"
-dnf clean all
-dnf -y --refresh --skip-broken --allowerasing upgrade
+    info "Updating dnf..."
+    dnf clean all
+    dnf -y --refresh --skip-broken --allowerasing upgrade
 
-echo "${BOLD}${CYAN}Installing nvidia drivers...${RESET}"
-dnf -y install akmod-nvidia
-# For cuda/nvdec/nvenc support
-dnf -y --best --allowerasing install xorg-x11-drv-nvidia-cuda xorg-x11-drv-nvidia-cuda-libs
-# In order to enable video acceleration support for your player
-dnf -y --best --allowerasing install vdpauinfo libva-vdpau-driver libva-utils
+    info "Installing Nvidia drivers..."
+    dnf -y install akmod-nvidia
+    # For cuda/nvdec/nvenc support
+    dnf -y --best --allowerasing install \
+        xorg-x11-drv-nvidia-cuda \
+        xorg-x11-drv-nvidia-cuda-libs
+    # In order to enable video acceleration support for your player
+    dnf -y --best --allowerasing install \
+        vdpauinfo \
+        libva-vdpau-driver \ 
+        libva-utils \
+        vulkan
 
-echo "${BOLD}${CYAN}Installing packages...${RESET}"
-dnf -y --best install "${dnf_packages[@]}"
+    success "Installed Nvidia drivers $(modinfo -F version nvidia)"
 
-echo "${BOLD}${CYAN}Installing flathub packages...${RESET}"
-flatpak install -y --noninteractive flathub "${flathub_packages[@]}"
-flatpak uninstall -y --noninteractive --unused
+    info "Installing packages..."
+    dnf -y --best install "${dnf_packages[@]}"
 
-echo "${BOLD}${CYAN}Installing Snap packages...${RESET}"
-dnf install -y snapd
-ln -sf /var/lib/snapd/snap /snap
-systemctl restart snapd.seeded.service
-for package in "${snap_packages[@]}"
-do
-   snap install "$package" --classic
-done
+    info "Installing Flathub packages..."
+    flatpak install -y --noninteractive flathub "${flathub_packages[@]}"
+    flatpak uninstall -y --noninteractive --unused
 
-echo "${BOLD}${CYAN}Installing global NodeJS packages...${RESET}"
-npm install -g "${npm_packages[@]}"
+    info "Installing Snap packages..."
+    dnf install -y snapd
+    ln -sf /var/lib/snapd/snap /snap
+    systemctl restart snapd.seeded.service
+    for package in "${snap_packages[@]}"
+    do
+    snap install "$package" --classic
+    done
 
-echo "${BOLD}${CYAN}Installing multimedia codecs...${RESET}"
-dnf -y groupupdate multimedia --setop="install_weak_deps=False" --exclude=PackageKit-gstreamer-plugin
-dnf -y groupupdate sound-and-video
+    info "Installing global NodeJS packages..."
+    npm install -g "${npm_packages[@]}"
 
-echo "${BOLD}${CYAN}Installing insync...${RESET}"
+    info "Installing multimedia codecs..."
+    dnf -y groupupdate multimedia \
+        --setop="install_weak_deps=False" \
+        --exclude=PackageKit-gstreamer-plugin
+    dnf -y groupupdate sound-and-video
 
-rpm --import https://d2t3ff60b2tol4.cloudfront.net/repomd.xml.key
-cat <<EOF > /etc/yum.repos.d/insync.repo
-[insync]
-name=insync repo
-baseurl=http://yum.insync.io/fedora/\$releasever/
-gpgcheck=1
-gpgkey=https://d2t3ff60b2tol4.cloudfront.net/repomd.xml.key
-enabled=1
-metadata_expire=120m
-EOF
-dnf -y install insync
+}
+install_packages
 
 #==============================================================================
 # set fish shell as default
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up fish shell...${RESET}"
+info "Setting up fish shell..."
 dnf install -y fish util-linux-user starship
-chsh -s /usr/bin/fish $git_username
+chsh -s /usr/bin/fish $SUDO_USER
 
 #==============================================================================
-# Install the Development and build tools 
+# Install development and build tools 
 #==============================================================================
-echo "${BOLD}${CYAN}Install the Development and build tools...${RESET}"
+info "Install development and build tools..."
 dnf -y groupinstall "Development Tools" "Development Libraries"
-dnf -y install cmake gcc-c++
+dnf -y install make cmake gcc gcc-c++
 
 #==============================================================================
-# setup python
+# Setup python
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up python environment...${RESET}"
+info "Setting up python environment..."
 
 # install python dependencies
 dnf -y install \
@@ -343,7 +355,7 @@ dnf -y install \
     libffi-devel \
     xz-devel
 
-sudo -i -u $git_username bash << EOF
+sudo -i -u $SUDO_USER bash << EOF
 # install pyenv
 curl https://pyenv.run | bash
 exec $SHELL
@@ -351,6 +363,7 @@ exec $SHELL
 pyenv install --list | grep " 3.7" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.9" | tail -1 | xargs pyenv install -v
+pyenv install --list | grep " 3.10" | tail -1 | xargs pyenv install -v
 # 3.8 as global version
 pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv global
 
@@ -361,29 +374,40 @@ poetry config virtualenvs.in-project true
 EOF
 
 #==============================================================================
-# setup docker
+# Setup docker
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up docker...${RESET}"
+info "Setting up docker..."
 
 # Install Docker
 dnf -y install moby-engine
 # Start & enable Docker daemon
 systemctl enable --now docker.service
 groupadd docker || true
-usermod -aG docker $git_username
-#==============================================================================
-# setup aws tools
-#==============================================================================
-echo "${BOLD}${CYAN}Installing aws tools...${RESET}"
+usermod -aG docker $SUDO_USER
 
-dnf -y copr enable spot/aws-cli-2
-dnf -y install aws-cli-2 golang
-go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+#==============================================================================
+# Install awscli
+#==============================================================================
+install_awscli() {
+    pushd /tmp
+    info "Installing AWS CLI"
+    rm -rf aws
+    local filename=awscliv2.zip
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o ${filename}
+    unzip  ${filename}
+    ./aws/install > /dev/null 2>&1 || ./aws/install --update
+    popd
+    success "Installed awscli: $($(which aws) --version)"
+
+    dnf --setopt=install_weak_deps=False -y install golang
+    go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+}
+install_awscli
 
 #==============================================================================
 # install fonts
 #==============================================================================
-echo "${BOLD}${CYAN}Installing fonts...${RESET}"
+info "Installing fonts..."
 
 dnf -y install curl cabextract xorg-x11-font-utils fontconfig rsms-inter-fonts
 rpm -ivh --force https://downloads.sourceforge.net/project/mscorefonts2/rpms/msttcore-fonts-installer-2.6-1.noarch.rpm
@@ -395,11 +419,6 @@ sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh FiraCode
 sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh SourceCodePro
 
 #==============================================================================
-# misc
-#==============================================================================
-echo fs.inotify.max_user_watches=524288 | tee -a /etc/sysctl.conf && sysctl -p
-
-#==============================================================================
 # Set performance profile
 #==============================================================================
 dnf -y install tuned
@@ -407,27 +426,35 @@ systemctl enable --now tuned
 tuned-adm profile desktop
 
 #==============================================================================
-# setup gnome desktop
+# Increase inotify watchers for watching large numbers of files, default is 8192
+#
+# curl -s https://raw.githubusercontent.com/fatso83/dotfiles/master/utils/scripts/inotify-consumers | bash
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up Gnome desktop...${RESET}"
+echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+
+#==============================================================================
+# Setup Gnome desktop
+#==============================================================================
+info "Setting up Gnome desktop..."
 
 # install dependencies
 dnf -y install gnome-themes-extra gtk-murrine-engine sassc
 # install gtk theme
-rm -rf /tmp/Qogir-theme
+rm -rf /tmp/Orchis-theme
 git clone https://github.com/vinceliuice/Orchis-theme.git /tmp/Orchis-theme
-sudo -i -u $git_username bash /tmp/Orchis-theme/install.sh
+sudo -i -u $SUDO_USER bash /tmp/Orchis-theme/install.sh --tweaks solid
 
-\\# install icon theme
-sudo -i -u $git_username wget -qO- https://git.io/papirus-icon-theme-install | sh
+# install icon theme
+sudo -i -u $SUDO_USER wget -qO- https://git.io/papirus-icon-theme-install | sh
 
 # set up themes
 gsettings set org.gnome.desktop.interface gtk-theme "Orchis-dark"
 gsettings set org.gnome.desktop.wm.preferences theme "Orchis-dark"
 gsettings set org.gnome.desktop.interface icon-theme 'Papirus-Dark'
 
-echo "${BOLD}Setting up Gnome desktop gsettings...${RESET}"
+info "Setting up Gnome desktop gsettings..."
 
+gsettings set org.gnome.desktop.interface clock-show-date true
 gsettings set org.gnome.desktop.session idle-delay 2400
 
 #Usability Improvements
@@ -439,19 +466,19 @@ gsettings set org.gtk.Settings.FileChooser sort-directories-first true
 #==============================================================================
 # setup KDE theme
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up KDE theme...${RESET}"
+info "Setting up KDE theme..."
 # install qt theme engine
 dnf -y install kvantum
 # install qt theme
-rm -rf /tmp/Orchis-kde
+rm -rf /tmp/Qogir-kde
 git clone https://github.com/vinceliuice/Qogir-kde.git /tmp/Qogir-kde
-sudo -i -u $git_username bash /tmp/Qogir-theme/install.sh
-sudo -i -u $git_username kvantummanager --set "Qogir-dark"
+sudo -i -u $SUDO_USER bash /tmp/Qogir-kde/install.sh
+sudo -i -u $SUDO_USER kvantummanager --set "Qogir-dark-solid"
 
 #==============================================================================
 # setup qtile
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up qtile...${RESET}"
+info "Setting up qtile..."
 
 # needed for audio control
 dnf -y install pulseaudio-utils pavucontrol
@@ -475,7 +502,7 @@ EOF
 #==============================================================================
 # setup rofi
 #==============================================================================
-echo "${BOLD}${CYAN}Setting up rofi...${RESET}"
+info "Setting up rofi..."
 
 dnf -y install rofi rofimoji rofi-devel qalculate libqalculate-devel libtool
 
@@ -525,6 +552,12 @@ dnf -y install googler
 npm install -g rofi-search
 
 #==============================================================================
+# setup bat
+#==============================================================================
+info "Setting up bat..."
+bat cache --build
+
+#==============================================================================
 # fixing nvidia screen tearning
 #==============================================================================
 # https://wiki.archlinux.org/title/NVIDIA/Troubleshooting#Avoid_screen_tearing
@@ -558,14 +591,13 @@ EOF
 #==============================================================================
 # done
 #==============================================================================
-cat <<EOF
+display_end_message() {
+    cat <<EOL
+
 =============================================================================
 Congratulations, everything is set up ! ✨ 🍰 ✨
-
-Non-automated tasks:
-- gnome-extensions: ${YELLOW}https://extensions.gnome.org/extension/3843/just-perfection${RESET}
-- btrfs filesystem optimizations:${YELLOW}https://mutschler.eu/linux/install-guides/fedora-post-install/#btrfs-filesystem-optimizations${RESET}
-
 Please reboot 🚀
 =============================================================================
-EOF
+EOL
+}
+display_end_message
