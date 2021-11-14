@@ -34,6 +34,10 @@ pyenv init - | source
 set -gx GOPATH $HOME/go
 set -gx PATH $PATH $GOPATH/bin
 
+# colororize man with bat
+set -gx MANROFFOPT -c
+set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
+
 # theme
 base16-material-darker
 

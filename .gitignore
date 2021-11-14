@@ -104,6 +104,7 @@
 # --- Add your entries below this line:
 __pycache__
 !/.config/
+!/.config/bat/**
 !/.config/dunst/*
 !/.config/fish/**
 !/.config/gtk-2.0/*
