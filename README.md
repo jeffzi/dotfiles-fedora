@@ -21,4 +21,5 @@ Desktop:
 ![desktop](desktop.png)
 
 Drop-down console (quake style):
+
 ![desktop](quake_console.png)
