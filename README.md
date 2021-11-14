@@ -14,6 +14,11 @@ for my development setup on Fedora 34.
 * [Qtile](http://www.qtile.org/) window manager
 * [Rofi](https://github.com/davatorium/rofi) application launcher
 
-Desktop demo:
+---
+
+Desktop:
+
 ![desktop](desktop.png)
+
+Drop-down console (quake style):
 ![desktop](quake_console.png)
