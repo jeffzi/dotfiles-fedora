@@ -39,7 +39,7 @@ widgets = [
     widget.TaskList(
         border=theme.FOCUSED_COLOR,
         borderwidth=1,
-        font="SauceCodePro Nerd Font",
+        font="FiraCode Nerd Font",
         margin=1,
         markup_normal=(
             f'<span foreground="{theme.UNFOCUSED_COLOR}" '
@@ -59,6 +59,7 @@ widgets = [
         display_metadata=["xesam:artist", "xesam:title"],
         scroll_chars=None,
         stop_pause_text="",
+        foreground=theme.UNFOCUSED_COLOR,
     ),
     widget.Systray(),
     widget.Sep(size_percent=60, linewidth=2, padding=10),
