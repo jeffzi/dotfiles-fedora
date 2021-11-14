@@ -16,3 +16,4 @@ for my development setup on Fedora 34.
 
 Desktop demo:
 ![desktop](desktop.png)
+![desktop](quake_console.png)
