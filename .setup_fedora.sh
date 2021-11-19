@@ -111,6 +111,7 @@ flathub_packages=(
     com.skype.Client
     com.slack.Slack
     com.spotify.Client
+    rest.insomnia.Insomnia
 )
 
 snap_packages=(
@@ -169,6 +170,12 @@ download_latest_github_release() {
     local filename=$(curl -s $endpoint | grep -oP '"name": "\K(.*)(?=")' | grep ${2})
     
     echo ${filename}
+}
+
+# Call with arguments (${1} filename,${2} strip,${3} newname)
+install() {
+    tar --no-same-owner -C /usr/local/bin -xf "${1}" --no-anchored "${3}" --strip="${2}"
+    rm "${1}"
 }
 
 display_user_settings_and_prompt() {
@@ -279,6 +286,13 @@ install_packages() {
     info "Updating dnf..."
     dnf clean all
     dnf -y --refresh --skip-broken --allowerasing upgrade
+    dfn check
+    dnf autoremove -y
+
+    info "Updating LVFS..."
+    fwupdmgr refresh --force
+    fwupdmgr get-updates
+    fwupdmgr update
 
     info "Installing Nvidia drivers..."
     dnf -y install akmod-nvidia
@@ -319,6 +333,10 @@ install_packages() {
         --setop="install_weak_deps=False" \
         --exclude=PackageKit-gstreamer-plugin
     dnf -y groupupdate sound-and-video
+
+    info "Installing mdcat..."
+    mdcat_archive=$(download_latest_github_release "lunaryorn/mdcat" "mdcat-.*-unknown-linux-musl.tar.gz")
+    install ${mdcat_archive} 1 mdcat
 
 }
 install_packages
@@ -431,6 +449,7 @@ tuned-adm profile desktop
 # curl -s https://raw.githubusercontent.com/fatso83/dotfiles/master/utils/scripts/inotify-consumers | bash
 #==============================================================================
 echo fs.inotify.max_user_watches=524288 | sudo tee -a /etc/sysctl.conf && sudo sysctl -p
+systemctl enable fstrim.timer
 
 #==============================================================================
 # Setup Gnome desktop
@@ -596,6 +615,11 @@ display_end_message() {
 
 =============================================================================
 Congratulations, everything is set up ! ✨ 🍰 ✨
+
+Manual action required:
+
+- BTRFS optimizations: https://mutschler.eu/linux/install-guides/fedora-post-install/#btrfs-filesystem-optimizations
+
 Please reboot 🚀
 =============================================================================
 EOL
