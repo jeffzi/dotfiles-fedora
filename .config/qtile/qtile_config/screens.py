@@ -40,13 +40,14 @@ widgets = [
         border=theme.FOCUSED_COLOR,
         borderwidth=1,
         font="FiraCode Nerd Font",
+        icon_size=0,
         margin=1,
         markup_normal=(
             f'<span foreground="{theme.UNFOCUSED_COLOR}" '
             + f'background="{theme.LIGHTER_DARK}">{{}}</span>'
         ),
         markup_focused=f'<span foreground="{theme.FOCUSED_COLOR}">{{}}</span>',
-        max_title_width=512,
+        max_title_width=256,
         parse_text=_strip_app_name,
         unfocused_border=theme.DARK_GREY,
         urgent_border=theme.URGENT_COLOR,
