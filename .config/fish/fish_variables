@@ -1,12 +1,19 @@
 # This file contains fish universal variable definitions.
 # VERSION: 3.0
+SETUVAR --export EXA_LA_OPTIONS:\x2d\x2dbinary\x1e\x2d\x2dlinks\x1e\x2d\x2dinode\x1e\x2d\x2dblocks
+SETUVAR --export EXA_LD_OPTIONS:\x2d\x2dlist\x2ddirs
+SETUVAR --export EXA_LE_OPTIONS:\x2d\x2dextended
+SETUVAR --export EXA_LG_OPTIONS:\x2d\x2dgit
+SETUVAR --export EXA_LT_OPTIONS:\x2d\x2dtree\x1e\x2d\x2dno\x2dpermissions\x1e\x2d\x2dno\x2duser
+SETUVAR --export EXA_STANDARD_OPTIONS:\x2d\x2dlong\x1e\x2d\x2dall\x1e\x2d\x2dgroup\x2ddirectories\x2dfirst\x1e\x2d\x2dtime\x2dstyle\x3dlong\x2diso
 SETUVAR --export PYENV_ROOT:/home/jeffzi/\x2epyenv
 SETUVAR __fish_initialized:3100
 SETUVAR _fish_abbr_pjo:pj\x20open
+SETUVAR _fisher_gazorby_2F_fish_2D_exa_files:/home/jeffzi/\x2econfig/fish/functions/exa_git\x2efish\x1e/home/jeffzi/\x2econfig/fish/conf\x2ed/fish\x2dexa\x2efish
 SETUVAR _fisher_jorgebucaran_2F_fisher_files:/home/jeffzi/\x2econfig/fish/functions/fisher\x2efish\x1e/home/jeffzi/\x2econfig/fish/completions/fisher\x2efish
 SETUVAR _fisher_jorgebucaran_2F_replay_2E_fish_files:/home/jeffzi/\x2econfig/fish/functions/replay\x2efish\x1e/home/jeffzi/\x2econfig/fish/completions/replay\x2efish
 SETUVAR _fisher_oh_2D_my_2D_fish_2F_plugin_2D_pj_files:/home/jeffzi/\x2econfig/fish/functions/pj\x2efish\x1e/home/jeffzi/\x2econfig/fish/completions/pj\x2efish
-SETUVAR _fisher_plugins:ryoppippi/fish\x2dpoetry\x1etomyun/base16\x2dfish\x1ejorgebucaran/replay\x2efish\x1ejorgebucaran/fisher\x1eoh\x2dmy\x2dfish/plugin\x2dpj
+SETUVAR _fisher_plugins:ryoppippi/fish\x2dpoetry\x1ejorgebucaran/replay\x2efish\x1ejorgebucaran/fisher\x1eoh\x2dmy\x2dfish/plugin\x2dpj\x1egazorby/fish\x2dexa
 SETUVAR _fisher_ryoppippi_2F_fish_2D_poetry_files:/home/jeffzi/\x2econfig/fish/conf\x2ed/fish\x2dpoetry\x2efish
 SETUVAR base16_theme:material\x2ddarker
 SETUVAR fish_color_autosuggestion:353535
