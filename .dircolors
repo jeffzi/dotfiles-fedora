@@ -1,0 +1,281 @@
+# Modified from https://github.com/arcticicestudio/nord-dircolors
+
+COLOR tty
+
+TERM alacritty
+TERM alacritty-direct
+TERM ansi
+TERM *color*
+TERM con[0-9]*x[0-9]*
+TERM cons25
+TERM console
+TERM cygwin
+TERM dtterm
+TERM dvtm
+TERM dvtm-256color
+TERM Eterm
+TERM eterm-color
+TERM fbterm
+TERM gnome
+TERM gnome-256color
+TERM hurd
+TERM jfbterm
+TERM konsole
+TERM konsole-256color
+TERM kterm
+TERM linux
+TERM linux-c
+TERM mlterm
+TERM putty
+TERM putty-256color
+TERM rxvt*
+TERM rxvt-unicode
+TERM rxvt-256color
+TERM rxvt-unicode256
+TERM screen*
+TERM screen-256color
+TERM st
+TERM st-256color
+TERM terminator
+TERM tmux*
+TERM tmux-256color
+TERM vt100
+TERM xterm*
+TERM xterm-color
+TERM xterm-88color
+TERM xterm-256color
+TERM xterm-kitty
+
+#+-----------------+
+#+ Global Defaults +
+#+-----------------+
+NORMAL 00
+RESET 0
+
+FILE 00
+DIR 01;34
+LINK 36
+MULTIHARDLINK 04;36
+
+FIFO 04;01;36
+SOCK 04;33
+DOOR 04;01;36
+BLK 01;33
+CHR 33
+
+ORPHAN 31
+MISSING 01;37;41
+
+EXEC 01;32
+
+SETUID 01;04;37
+SETGID 01;04;37
+CAPABILITY 01;37
+
+STICKY_OTHER_WRITABLE 01;37;44
+OTHER_WRITABLE 01;04;34
+STICKY 04;37;44
+
+#+-------------------+
+#+ Extension Pattern +
+#+-------------------+
+#+--- Archives ---+
+.7z 38;5;40
+.ace 38;5;40
+.alz 38;5;40
+.arc 38;5;40
+.arj 38;5;40
+.bz 38;5;40
+.bz2 38;5;40
+.cab 38;5;40
+.cpio 38;5;40
+.deb 38;5;40
+.dz 38;5;40
+.ear 38;5;40
+.gz 38;5;40
+.jar 38;5;40
+.lha 38;5;40
+.lrz 38;5;40
+.lz 38;5;40
+.lz4 38;5;40
+.lzh 38;5;40
+.lzma 38;5;40
+.lzo 38;5;40
+.rar 38;5;40
+.rpm 38;5;40
+.rz 38;5;40
+.sar 38;5;40
+.t7z 38;5;40
+.tar 38;5;40
+.taz 38;5;40
+.tbz 38;5;40
+.tbz2 38;5;40
+.tgz 38;5;40
+.tlz 38;5;40
+.txz 38;5;40
+.tz 38;5;40
+.tzo 38;5;40
+.tzst 38;5;40
+.war 38;5;40
+.xz 38;5;40
+.z 38;5;40
+.Z 38;5;40
+.zip 38;5;40
+.zoo 38;5;40
+.zst 38;5;40
+
+#+--- Images ---+
+.bmp 38;5;212
+.cgm 38;5;212
+.dl 38;5;212
+.dvi 38;5;212
+.emf 38;5;212
+.eps 38;5;212
+.gif 38;5;212
+.jpeg 38;5;212
+.jpg 38;5;212
+.JPG 38;5;212
+.mng 38;5;212
+.pbm 38;5;212
+.pcx 38;5;212
+.pgm 38;5;212
+.png 38;5;212
+.PNG 38;5;212
+.ppm 38;5;212
+.pps 38;5;212
+.ppsx 38;5;212
+.ps 38;5;212
+.svg 38;5;212
+.svgz 38;5;212
+.tga 38;5;212
+.tif 38;5;212
+.tiff 38;5;212
+.xbm 38;5;212
+.xcf 38;5;212
+.xpm 38;5;212
+.xwd 38;5;212
+.xwd 38;5;212
+.yuv 38;5;212
+
+#+--- Audio ---+
+.aac 38;5;212
+.au 38;5;212
+.flac 38;5;212
+.m4a 38;5;212
+.mid 38;5;212
+.midi 38;5;212
+.mka 38;5;212
+.mp3 38;5;212
+.mpa 38;5;212
+.mpeg 38;5;212
+.mpg 38;5;212
+.ogg 38;5;212
+.opus 38;5;212
+.ra 38;5;212
+.wav 38;5;212
+
+#+--- Video ---+
+.anx 38;5;212
+.asf 38;5;212
+.avi 38;5;212
+.axv 38;5;212
+.flc 38;5;212
+.fli 38;5;212
+.flv 38;5;212
+.gl 38;5;212
+.m2v 38;5;212
+.m4v 38;5;212
+.mkv 38;5;212
+.mov 38;5;212
+.MOV 38;5;212
+.mp4 38;5;212
+.mpeg 38;5;212
+.mpg 38;5;212
+.nuv 38;5;212
+.ogm 38;5;212
+.ogv 38;5;212
+.ogx 38;5;212
+.qt 38;5;212
+.rm 38;5;212
+.rmvb 38;5;212
+.swf 38;5;212
+.vob 38;5;212
+.webm 38;5;212
+.wmv 38;5;212
+
+#+--- Datasets ---+
+.csv 35
+.dat 35
+.json 35
+.jsonl 35
+.parquet 35
+.tsv 35
+.txt 35
+.xls 35
+
+#+--- Configuration & build ---+
+.cfg 36;2
+.ini 36;2
+.rdata 36;2
+.RData 36;2
+.Rproj 36;2
+.sqlfluff 36;2
+.toml 36;2
+.xml 36;2
+.yaml 36;2
+.yml 36;2
+*Makefile 36;2
+*noxfile.py 36;2
+*rc 36;2
+*setup.py 36;2
+*lDockerfile 36;2
+
+#+--- Git ---+
+.git 38;5;197
+.gitignore 38;5;240
+.gitattributes 38;5;240
+.gitmodules 38;5;240
+
+#+--- Error logs ---+
+.err 38;5;160;1
+.error 38;5;160;1
+.stderr 38;5;160;1
+
+#+--- Documents ---+
+*.md 33
+*.rst 33
+*AUTHORS 33;4
+*CODE_OF_CONDUCT.md 33;4
+*CONTRIBUTING.md 33;4
+*CONTRIBUTORS 33;4
+*COPYING 33;4
+*COPYRIGHT 33;4
+*HISTORY 33;4
+*INSTALL 33;4
+*LICENSE 33;4
+*NOTICE 33;4
+*PATENTS 33;4
+*README* 33;4
+*VERSION 33;4
+
+#+--- Ignores ---+
+.bak 38;5;240
+.BAK 38;5;240
+.coverage* 38;5;240
+.DS_Store 38;5;239
+.localized 38;5;239
+.log 38;5;240
+.log 38;5;240
+.old 38;5;240
+.OLD 38;5;240
+.orig 38;5;240
+.ORIG 38;5;240
+.pyc 38;5;240
+.python-version 38;5;240
+.swo 38;5;240
+.swp 38;5;240
+*.log 38;5;240
+*~ 38;5;240
+*ignore 38;5;240
+*lock 38;5;248
+*lock.json 38;5;240

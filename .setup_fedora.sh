@@ -85,6 +85,7 @@ dnf_packages=(
     gvfs-nfs
     gvfs-smb
     htop
+    exa
     jq
     kitty
     mediainfo

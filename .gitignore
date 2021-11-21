@@ -103,6 +103,7 @@
 #
 # --- Add your entries below this line:
 __pycache__
+!/.dircolors
 !/.config/
 !/.config/bat/**
 !/.config/dunst/*
