@@ -99,13 +99,16 @@ element {
 }
 
 element-icon {
+    background-color: inherit;
     border: 0px;
     size: 48px;
 }
 
 element-text {
+    background-color: inherit;
     expand: true;
     margin: 0% 0.25% 0% 0.25%;
+    text-color:       inherit;
     vertical-align: 0.5;
 }
 
