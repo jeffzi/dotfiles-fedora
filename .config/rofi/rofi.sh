@@ -1,7 +1,7 @@
 #! /bin/sh
 
 rofi \
-	-modi combi,file-browser-extended,":rofimoji",top,calc \
+	-modi combi,":rofimoji",top,calc \
 	-show combi \
 	-combi-modi window,drun \
 	-display-combi   \
