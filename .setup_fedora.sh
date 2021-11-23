@@ -7,7 +7,7 @@
 #==============================================================================
 
 remove_packages=(
-    *hangul*
+    *hangul*d
     *kkc*
     *libvirt*
     *m17n*
@@ -63,10 +63,13 @@ remove_packages=(
 dnf_packages=(
     baobab
     bat
+    blueman
     code
     copyq
     dunst
+    exa
     fedora-workstation-repositories
+    feh
     ffmpeg
     flameshot
     fuse-exfat
@@ -85,7 +88,6 @@ dnf_packages=(
     gvfs-nfs
     gvfs-smb
     htop
-    exa
     jq
     kitty
     mediainfo
@@ -387,7 +389,7 @@ pyenv install --list | grep " 3.10" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv global
 
 # install poetry
-curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/install-poetry.py | python -
+curl -sSL https://install.python-poetry.org | python -
 #  Store python virtual environments in the package s directory
 poetry config virtualenvs.in-project true
 EOF
