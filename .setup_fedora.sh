@@ -110,6 +110,7 @@ dnf_packages=(
 
 flathub_packages=(
     com.axosoft.GitKraken
+    com.discordapp.Discord
     com.jetbrains.DataGrip
     com.skype.Client
     com.slack.Slack
