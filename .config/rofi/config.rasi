@@ -2,6 +2,6 @@ configuration {
     modi: "window,run";
     terminal: "kitty";
     combi-hide-mode-prefix: true;
-    theme: "~/.config/rofi/material_darker.rasi";
     window-thumbnail: true;
 }
+@theme "~/.config/rofi/material_darker.rasi"
