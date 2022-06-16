@@ -4,7 +4,7 @@ import os
 from libqtile.config import Key
 from libqtile.lazy import lazy
 
-from .groups import SCRATCHPAD_NAME, groups
+from .groups import SCRATCHPAD_NAME, main_groups
 
 ALT = "mod1"
 HYPER = "mod3"
@@ -28,11 +28,21 @@ MEDIA_CMD = (
 )
 
 
-def _next_prev(action):
+def _send_mpris_action(action):
     def _spawn(qtile):
         qtile.cmd_spawn(MEDIA_CMD + action)
 
     return _spawn
+
+
+def _to_next_screen(qtile):
+    if qtile.current_window is None:
+        return
+
+    screens = qtile.screens
+    current_idx = screens.index(qtile.current_screen)
+    next_screen = screens[(current_idx + 1) % len(screens)]
+    qtile.current_window.togroup(next_screen.group.name)
 
 
 keys = [
@@ -40,7 +50,12 @@ keys = [
     Key([MOD], RETURN, lazy.spawn("kitty -e fish")),
     Key([MOD], SPACE, lazy.spawn(os.path.expanduser("~/.config/rofi/rofi.sh"))),
     Key([MOD], "c", lazy.spawn(os.path.expanduser("~/.config/rofi/rofi-copyq.py"))),
-    Key([MOD], "s", lazy.spawn(os.path.expanduser("~/.config/rofi/rofi-search.sh"))),
+    Key(
+        [MOD],
+        "s",
+        lazy.function(_to_next_screen),
+        desc="Send current window to next screen",
+    ),
     Key([MOD], TAB, lazy.next_layout(), desc="Toggle through layouts"),
     # audio
     Key(
@@ -54,8 +69,8 @@ keys = [
         lazy.spawn("pactl set-sink-volume @DEFAULT_SINK@ -5%"),
     ),
     Key([], "XF86AudioPlay", lazy.spawn(MEDIA_CMD + "PlayPause")),
-    Key([], "XF86AudioNext", lazy.function(_next_prev("Next"))),
-    Key([], "XF86AudioPrev", lazy.function(_next_prev("Previous"))),
+    Key([], "XF86AudioNext", lazy.function(_send_mpris_action("Next"))),
+    Key([], "XF86AudioPrev", lazy.function(_send_mpris_action("Previous"))),
     Key([MOD], TAB, lazy.next_layout(), desc="Toggle through layouts"),
     # qtile
     Key([MOD, SHIFT], "r", lazy.restart(), desc="Restart Qtile"),
@@ -142,7 +157,7 @@ keys = [
     ),
 ]
 
-for i, group in enumerate(groups, 1):
+for i, group in enumerate(main_groups, 1):
     keys.extend(
         [
             Key(

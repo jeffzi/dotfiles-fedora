@@ -75,8 +75,11 @@ follow_mouse_focus = False
 groups = qtile_config.groups
 floating_layout = qtile_config.floating_layout
 layouts = qtile_config.layouts
+
 screens = qtile_config.screens
+
 widget_defaults = qtile_config.widget_defaults
 extension_defaults = widget_defaults.copy()
+
 keys = qtile_config.keys
 mouse = qtile_config.mouse

@@ -5,14 +5,17 @@ description = "jeffzi personal qtile config"
 authors = ["Jean-Francois Zinque <jzinque@gmail.com>"]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.9"
-qtile = { git = "https://github.com/qtile/qtile.git" }
+python = ">=3.8,<4.0"
 typer = "^0.3.2"
 pre-commit = "^2.13.0"
 dbus-next = "^0.2.2"
 psutil = "^5.8.0"
+python-xlib = "^0.31"
+qtile = "^0.21.0"
 
 [tool.poetry.dev-dependencies]
+mypy = "^0.930"
+isort = "^5.10.1"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

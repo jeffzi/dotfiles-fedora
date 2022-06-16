@@ -3,7 +3,6 @@
 from .groups import groups, is_working_hours
 from .keys import keys, mod
 from .layouts import floating_layout, layouts
-from .monadthreecol import MonadThreeCol
 from .mouse import mouse
 from .screens import screens
 from .theme import widget_defaults
