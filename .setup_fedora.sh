@@ -87,7 +87,9 @@ dnf_packages=(
     gvfs-mtp
     gvfs-nfs
     gvfs-smb
+    hplip-gui
     htop
+    java-latest-openjdk
     jq
     kitty
     mediainfo
@@ -116,6 +118,7 @@ flathub_packages=(
     com.slack.Slack
     com.spotify.Client
     rest.insomnia.Insomnia
+    us.zoom.Zoom
 )
 
 snap_packages=(
@@ -141,8 +144,6 @@ CYAN=$(tput setaf 6)
 BOLD=$(tput bold)
 RESET=$(tput sgr0)
 
-BIN_INSTALL_DIR=/usr/local/bin
-
 if [ "$(id -u)" != 0 ]; then
     echo "You're not root! Run script with sudo" && exit 1
 fi
@@ -160,20 +161,21 @@ success() {
 # Call with arguments (${1} path,${2} line to add)
 add_to_file() {
     touch "$1"
-    grep -qxF "$2" "$1" || echo "$2" >>"$1"
+    grep -qxF "$2" "$1" && echo "$2 exists in ${GREEN}$1${RESET}" || echo "$2" >>"$1"
 }
 
 # Call with arguments ${1} github_user/repo, ${2} asset_name
 download_latest_github_release() {
     local endpoint="https://api.github.com/repos/${1}/releases/latest"
-    curl -s $endpoint \
+    curl -s "$endpoint" \
         | grep -oP '"browser_download_url": "\K(.*)(?=")' \
-        | grep ${2} \
+        | grep "${2}" \
         | wget -qi -
 
-    local filename=$(curl -s $endpoint | grep -oP '"name": "\K(.*)(?=")' | grep ${2})
+    local filename
+    filename=$(curl -s "$endpoint" | grep -oP '"name": "\K(.*)(?=")' | grep "${2}")
     
-    echo ${filename}
+    echo "${filename}"
 }
 
 # Call with arguments (${1} filename,${2} strip,${3} newname)
@@ -213,7 +215,7 @@ display_user_settings_and_prompt
 #==============================================================================
 
 read -rp "What is this computer's name? [$HOSTNAME] " hostname
-if [[ ! -z "$hostname" ]]; then
+if [[ -n "$hostname" ]]; then
     hostnamectl set-hostname "$hostname"
 fi
 
@@ -307,7 +309,7 @@ install_packages() {
     # In order to enable video acceleration support for your player
     dnf -y --best --allowerasing install \
         vdpauinfo \
-        libva-vdpau-driver \ 
+        libva-vdpau-driver \
         libva-utils \
         vulkan
 
@@ -337,10 +339,14 @@ install_packages() {
         --setop="install_weak_deps=False" \
         --exclude=PackageKit-gstreamer-plugin
     dnf -y groupupdate sound-and-video
+    
+    # OpenH264 in Firefox
+    dnf config-manager --set-enabled fedora-cisco-openh264
+    dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
 
     info "Installing mdcat..."
     mdcat_archive=$(download_latest_github_release "lunaryorn/mdcat" "mdcat-.*-unknown-linux-musl.tar.gz")
-    install ${mdcat_archive} 1 mdcat
+    install "${mdcat_archive}" 1 mdcat
 
 }
 install_packages
@@ -350,7 +356,7 @@ install_packages
 #==============================================================================
 info "Setting up fish shell..."
 dnf install -y fish util-linux-user starship
-chsh -s /usr/bin/fish $SUDO_USER
+chsh -s /usr/bin/fish "$SUDO_USER"
 
 #==============================================================================
 # Install development and build tools 
@@ -377,7 +383,7 @@ dnf -y install \
     libffi-devel \
     xz-devel
 
-sudo -i -u $SUDO_USER bash << EOF
+sudo -i -u "$SUDO_USER" bash << EOF
 # install pyenv
 curl https://pyenv.run | bash
 exec $SHELL
@@ -405,20 +411,20 @@ dnf -y install moby-engine
 # Start & enable Docker daemon
 systemctl enable --now docker.service
 groupadd docker || true
-usermod -aG docker $SUDO_USER
+usermod -aG docker "$SUDO_USER"
 
 #==============================================================================
 # Install awscli
 #==============================================================================
 install_awscli() {
-    pushd /tmp
+    pushd /tmp || exit
     info "Installing AWS CLI"
     rm -rf aws
     local filename=awscliv2.zip
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o ${filename}
     unzip  ${filename}
     ./aws/install > /dev/null 2>&1 || ./aws/install --update
-    popd
+    popd || exit
     success "Installed awscli: $($(which aws) --version)"
 
     dnf --setopt=install_weak_deps=False -y install golang
@@ -436,9 +442,9 @@ rpm -ivh --force https://downloads.sourceforge.net/project/mscorefonts2/rpms/mst
 
 rm -rf /tmp/nerd-fonts
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /tmp/nerd-fonts
-sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh Hack
-sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh FiraCode
-sudo -i -u $git_username bash /tmp/nerd-fonts/install.sh SourceCodePro
+bash /tmp/nerd-fonts/install.sh Hack
+bash /tmp/nerd-fonts/install.sh FiraCode
+bash /tmp/nerd-fonts/install.sh SourceCodePro
 
 #==============================================================================
 # Set performance profile
@@ -465,10 +471,10 @@ dnf -y install gnome-themes-extra gtk-murrine-engine sassc
 # install gtk theme
 rm -rf /tmp/Orchis-theme
 git clone https://github.com/vinceliuice/Orchis-theme.git /tmp/Orchis-theme
-sudo -i -u $SUDO_USER bash /tmp/Orchis-theme/install.sh --tweaks solid
+sudo -i -u "$SUDO_USER" bash /tmp/Orchis-theme/install.sh --tweaks solid
 
 # install icon theme
-sudo -i -u $SUDO_USER wget -qO- https://git.io/papirus-icon-theme-install | sh
+sudo -i -u "$SUDO_USER" wget -qO- https://git.io/papirus-icon-theme-install | sh
 
 # set up themes
 gsettings set org.gnome.desktop.interface gtk-theme "Orchis-dark"
@@ -495,8 +501,8 @@ dnf -y install kvantum
 # install qt theme
 rm -rf /tmp/Qogir-kde
 git clone https://github.com/vinceliuice/Qogir-kde.git /tmp/Qogir-kde
-sudo -i -u $SUDO_USER bash /tmp/Qogir-kde/install.sh
-sudo -i -u $SUDO_USER kvantummanager --set "Qogir-dark-solid"
+sudo -i -u "$SUDO_USER" bash /tmp/Qogir-kde/install.sh
+sudo -i -u "$SUDO_USER" kvantummanager --set "Qogir-dark-solid"
 
 #==============================================================================
 # setup qtile
@@ -509,7 +515,7 @@ dnf -y install pulseaudio-utils pavucontrol
 # install qtile
 pip install xcffib
 pip install --upgrade --force-reinstall --no-cache-dir cairocffi[xcb]
-pip install dbus-next psutil qtile
+pip install dbus-next psutil python-xlib qtile
 
 
 # add qtile session
@@ -532,42 +538,42 @@ dnf -y install rofi rofimoji rofi-devel qalculate libqalculate-devel libtool
 # install rofi-calc
 rm -rf /tmp/rofi-calc
 git clone https://github.com/svenstaro/rofi-calc.git /tmp/rofi-calc
-pushd /tmp/rofi-calc
+pushd /tmp/rofi-calc || exit
 autoreconf -i
 mkdir build
-cd build/
+cd build/ || exit
 ../configure
 make
 make install
-popd
+popd || exit
 libtool --finish /usr/lib64/rofi/
 
 # install rofi-blocks
 dnf -y install json-glib-devel 
 rm -rf /tmp/rofi-blocks
 git clone https://github.com/OmarCastro/rofi-blocks.git /tmp/rofi-blocks
-pushd /tmp/rofi-blocks
+pushd /tmp/rofi-blocks || exit
 autoreconf -i
 mkdir build
-cd build/
+cd build/ || exit
 ../configure
 make
 make install
-popd
+popd || exit
 libtool --finish /usr/lib64/rofi/
 
 # install rofi-top
 dnf -y install libgtop2-devel
 rm -rf /tmp/rofi-top
 git clone https://gitcrate.org/qtools/rofi-top /tmp/rofi-top
-pushd /tmp/rofi-top
+pushd /tmp/rofi-top || exit
 autoreconf -i
 mkdir build
-cd build/
+cd build/ || exit
 ../configure
 make
 make install
-popd
+popd || exit
 libtool --finish /usr/lib64/rofi/
 
 # install rofi-search
@@ -590,7 +596,7 @@ Section "Device"
     Identifier     "Device0"
     Driver         "nvidia"
     VendorName     "NVIDIA Corporation"
-    BoardName      "NVIDIA GeForce GTX 970"
+    BoardName      "NVIDIA GeForce RT 3080"
 EndSection
 
 Section "Screen"
@@ -622,7 +628,7 @@ Congratulations, everything is set up ! ✨ 🍰 ✨
 
 Manual action required:
 
-- BTRFS optimizations: https://mutschler.eu/linux/install-guides/fedora-post-install/#btrfs-filesystem-optimizations
+- BTRFS optimizations: https://mutschler.dev/linux/fedora-post-install/
 
 Please reboot 🚀
 =============================================================================
