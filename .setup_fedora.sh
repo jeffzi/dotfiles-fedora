@@ -443,9 +443,9 @@ rpm -ivh --force https://downloads.sourceforge.net/project/mscorefonts2/rpms/mst
 
 rm -rf /tmp/nerd-fonts
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /tmp/nerd-fonts
-bash /tmp/nerd-fonts/install.sh Hack
-bash /tmp/nerd-fonts/install.sh FiraCode
-bash /tmp/nerd-fonts/install.sh SourceCodePro
+sudo -i -u "$LOGNAME" bash /tmp/nerd-fonts/install.sh Hack
+sudo -i -u "$LOGNAME" bash /tmp/nerd-fonts/install.sh FiraCode
+sudo -i -u "$LOGNAME" bash /tmp/nerd-fonts/install.sh SourceCodePro
 
 #==============================================================================
 # Set performance profile
