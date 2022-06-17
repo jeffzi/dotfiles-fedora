@@ -1,6 +1,6 @@
 function fisher --argument-names cmd --description "A plugin manager for Fish"
     set --query fisher_path || set --local fisher_path $__fish_config_dir
-    set --local fisher_version 4.3.0
+    set --local fisher_version 4.3.2
     set --local fish_plugins $__fish_config_dir/fish_plugins
 
     switch "$cmd"
@@ -15,6 +15,8 @@ function fisher --argument-names cmd --description "A plugin manager for Fish"
             echo "Options:"
             echo "       -v or --version  Print version"
             echo "       -h or --help     Print this help message"
+            echo "Variables:"
+            echo "       \$fisher_path  Plugin installation path. Default: ~/.config/fish"
         case ls list
             string match --entire --regex -- "$argv[2]" $_fisher_plugins
         case install update remove
@@ -70,23 +72,24 @@ function fisher --argument-names cmd --description "A plugin manager for Fish"
             set --local fetch_plugins $update_plugins $install_plugins
             echo (set_color --bold)fisher $cmd version $fisher_version(set_color normal)
 
-            for plugin in $fetch_plugins
+            fish_path=(status fish-path) for plugin in $fetch_plugins
                 set --local source (command mktemp -d)
                 set --append source_plugins $source
 
                 command mkdir -p $source/{completions,conf.d,functions}
 
-                fish --command "
+                $fish_path --command "
                     if test -e $plugin
                         command cp -Rf $plugin/* $source
                     else
                         set temp (command mktemp -d)
                         set name (string split \@ $plugin) || set name[2] HEAD
-                        set url https://codeload.github.com/\$name[1]/tar.gz/\$name[2]
+                        set url https://api.github.com/repos/\$name[1]/tarball/\$name[2]
+                        set header 'Accept: application/vnd.github.v3+json'
 
                         echo Fetching (set_color --underline)\$url(set_color normal)
 
-                        if curl --silent \$url | tar -xzC \$temp -f - 2>/dev/null
+                        if curl --silent -L -H \$header \$url | tar -xzC \$temp -f - 2>/dev/null
                             command cp -Rf \$temp/*/* $source
                         else
                             echo fisher: Invalid plugin name or host unavailable: \\\"$plugin\\\" >&2
@@ -180,10 +183,12 @@ function fisher --argument-names cmd --description "A plugin manager for Fish"
 
             command rm -rf $source_plugins
 
-            set --query _fisher_plugins[1] || set --erase _fisher_plugins
-            set --query _fisher_plugins &&
-                printf "%s\n" $_fisher_plugins >$fish_plugins ||
+            if set --query _fisher_plugins[1]
+                printf "%s\n" $_fisher_plugins >$fish_plugins
+            else
+                set --erase _fisher_plugins
                 command rm -f $fish_plugins
+            end
 
             set --local total (count $install_plugins) (count $update_plugins) (count $remove_plugins)
             test "$total" != "0 0 0" && echo (string join ", " (
