@@ -340,13 +340,14 @@ install_packages() {
         --exclude=PackageKit-gstreamer-plugin
     dnf -y groupupdate sound-and-video
     
-    # OpenH264 in Firefox
+    info "OpenH264 in Firefox, you'll need to active from Firefox plugins menu..."
     dnf config-manager --set-enabled fedora-cisco-openh264
     dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
 
-    info "Installing mdcat..."
-    mdcat_archive=$(download_latest_github_release "lunaryorn/mdcat" "mdcat-.*-unknown-linux-musl.tar.gz")
-    install "${mdcat_archive}" 1 mdcat
+    info "Installing Git Credential Manager..."
+    archive=$(download_latest_github_release "GitCredentialManager/git-credential-manager" "gcmcore-linux_amd64.*.tar.gz")
+    tar -xvf "$archive" -C /usr/local/bin
+    git-credential-manager-core configure
 
 }
 install_packages
