@@ -170,7 +170,7 @@ download_latest_github_release() {
     local endpoint="https://api.github.com/repos/${1}/releases/latest"
     curl -s "$endpoint" \
         | grep -oP '"browser_download_url": "\K(.*)(?=")' \
-        | grep "${2}" \
+        | grep -E "${2}" \
         | wget -qi -
 
     local filename
@@ -340,16 +340,10 @@ install_packages() {
         --setop="install_weak_deps=False" \
         --exclude=PackageKit-gstreamer-plugin
     dnf -y groupupdate sound-and-video
-    
+
     info "OpenH264 in Firefox, you'll need to active from Firefox plugins menu..."
     dnf config-manager --set-enabled fedora-cisco-openh264
     dnf install -y gstreamer1-plugin-openh264 mozilla-openh264
-
-    info "Installing Git Credential Manager..."
-    archive=$(download_latest_github_release "GitCredentialManager/git-credential-manager" "gcmcore-linux_amd64.*.tar.gz")
-    tar -xvf "$archive" -C /usr/local/bin
-    git-credential-manager-core configure
-
 }
 install_packages
 
@@ -366,6 +360,12 @@ chsh -s /usr/bin/fish "$LOGNAME"
 info "Install development and build tools..."
 dnf -y groupinstall "Development Tools" "Development Libraries"
 dnf -y install make cmake gcc gcc-c++
+
+
+info "Installing Git Credential Manager..."
+archive=$(download_latest_github_release "GitCredentialManager/git-credential-manager" "gcmcore-linux_amd64.*.tar.gz$")
+tar -xvf "$archive" -C /usr/local/bin
+git-credential-manager-core configure
 
 #==============================================================================
 # Setup python
@@ -433,6 +433,14 @@ install_awscli() {
     go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
 }
 install_awscli
+
+#==============================================================================
+# Install Mullvad
+#==============================================================================
+
+info "Installing Mullvad..."
+mullvad_rpm=$(download_latest_github_release "mullvad/mullvadvpn-app" "MullvadVPN-.*_x86_64.rpm$")
+dnf install -y "$mullvad_rpm"
 
 #==============================================================================
 # install fonts
@@ -515,9 +523,9 @@ info "Setting up qtile..."
 dnf -y install pulseaudio-utils pavucontrol
 
 # install qtile
-pip install xcffib
-pip install --upgrade --force-reinstall --no-cache-dir cairocffi[xcb]
-pip install dbus-next psutil python-xlib qtile
+sudo -i -u "$LOGNAME" pip install xcffib
+sudo -i -u "$LOGNAME" pip install --upgrade --force-reinstall --no-cache-dir cairocffi[xcb]
+sudo -i -u "$LOGNAME" pip install dbus-next psutil python-xlib qtile
 
 
 # add qtile session
