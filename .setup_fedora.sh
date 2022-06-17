@@ -66,6 +66,7 @@ dnf_packages=(
     blueman
     code
     copyq
+    direnv
     dunst
     exa
     fedora-workstation-repositories
