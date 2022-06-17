@@ -549,38 +549,6 @@ make install
 popd || exit
 libtool --finish /usr/lib64/rofi/
 
-# install rofi-blocks
-dnf -y install json-glib-devel 
-rm -rf /tmp/rofi-blocks
-git clone https://github.com/OmarCastro/rofi-blocks.git /tmp/rofi-blocks
-pushd /tmp/rofi-blocks || exit
-autoreconf -i
-mkdir build
-cd build/ || exit
-../configure
-make
-make install
-popd || exit
-libtool --finish /usr/lib64/rofi/
-
-# install rofi-top
-dnf -y install libgtop2-devel
-rm -rf /tmp/rofi-top
-git clone https://gitcrate.org/qtools/rofi-top /tmp/rofi-top
-pushd /tmp/rofi-top || exit
-autoreconf -i
-mkdir build
-cd build/ || exit
-../configure
-make
-make install
-popd || exit
-libtool --finish /usr/lib64/rofi/
-
-# install rofi-search
-dnf -y install googler
-npm install -g rofi-search
-
 #==============================================================================
 # setup bat
 #==============================================================================
@@ -629,7 +597,7 @@ Congratulations, everything is set up ! ✨ 🍰 ✨
 
 Manual action required:
 
-- BTRFS optimizations: https://mutschler.dev/linux/fedora-post-install/
+- BTRFS optimizations: https://mutschler.dev/linux/fedora-btrfs-35/ 
 
 Please reboot 🚀
 =============================================================================
