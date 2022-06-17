@@ -13,3 +13,15 @@
   cmd = code --wait --new-window $MERGED
 [credential]
 	helper = store
+	credentialStore = plaintext
+[delta]
+    syntax-theme = Visual Studio Dark+
+    side-by-side = true
+    line-numbers-left-format = ""
+    line-numbers-right-format = "│ "
+[credential "https://dev.azure.com"]
+	useHttpPath = true
+[commit]
+	gpgsign = false
+[credential "github.com"]
+	useHttpPath = true
