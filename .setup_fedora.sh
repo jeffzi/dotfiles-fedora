@@ -357,7 +357,7 @@ install_packages
 #==============================================================================
 info "Setting up fish shell..."
 dnf install -y fish util-linux-user starship
-chsh -s /usr/bin/fish "$SUDO_USER"
+chsh -s /usr/bin/fish "$LOGNAME"
 
 #==============================================================================
 # Install development and build tools 
@@ -384,7 +384,7 @@ dnf -y install \
     libffi-devel \
     xz-devel
 
-sudo -i -u "$SUDO_USER" bash << EOF
+sudo -i -u "$LOGNAME" bash << EOF
 # install pyenv
 curl https://pyenv.run | bash
 exec $SHELL
@@ -412,7 +412,7 @@ dnf -y install moby-engine
 # Start & enable Docker daemon
 systemctl enable --now docker.service
 groupadd docker || true
-usermod -aG docker "$SUDO_USER"
+usermod -aG docker "$LOGNAME"
 
 #==============================================================================
 # Install awscli
@@ -472,10 +472,10 @@ dnf -y install gnome-themes-extra gtk-murrine-engine sassc
 # install gtk theme
 rm -rf /tmp/Orchis-theme
 git clone https://github.com/vinceliuice/Orchis-theme.git /tmp/Orchis-theme
-sudo -i -u "$SUDO_USER" bash /tmp/Orchis-theme/install.sh --tweaks solid
+sudo -i -u "$LOGNAME" bash /tmp/Orchis-theme/install.sh --tweaks solid
 
 # install icon theme
-sudo -i -u "$SUDO_USER" wget -qO- https://git.io/papirus-icon-theme-install | sh
+sudo -i -u "$LOGNAME" wget -qO- https://git.io/papirus-icon-theme-install | sh
 
 # set up themes
 gsettings set org.gnome.desktop.interface gtk-theme "Orchis-dark"
@@ -502,8 +502,8 @@ dnf -y install kvantum
 # install qt theme
 rm -rf /tmp/Qogir-kde
 git clone https://github.com/vinceliuice/Qogir-kde.git /tmp/Qogir-kde
-sudo -i -u "$SUDO_USER" bash /tmp/Qogir-kde/install.sh
-sudo -i -u "$SUDO_USER" kvantummanager --set "Qogir-dark-solid"
+sudo -i -u "$LOGNAME" bash /tmp/Qogir-kde/install.sh
+sudo -i -u "$LOGNAME" kvantummanager --set "Qogir-dark-solid"
 
 #==============================================================================
 # setup qtile
