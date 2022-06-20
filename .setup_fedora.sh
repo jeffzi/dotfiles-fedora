@@ -408,7 +408,7 @@ poetry config virtualenvs.in-project true
 python -m pip install --user pipx
 python -m pipx ensurepath
 
-# install linters
+# install python tools
 pipx install black 
 pipx install flake8 
 pipx install isort 
@@ -591,7 +591,7 @@ info "Setting up bat..."
 bat cache --build
 
 #==============================================================================
-# fixing nvidia screen tearning
+# Setup monitors + fix nvidia screen tearning
 #==============================================================================
 # https://wiki.archlinux.org/title/NVIDIA/Troubleshooting#Avoid_screen_tearing
 cat <<EOF > /etc/X11/xorg.conf
