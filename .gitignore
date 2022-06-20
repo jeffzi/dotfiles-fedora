@@ -113,7 +113,7 @@ __pycache__
 !/.config/gtk-4.0/
 !/.config/kitty/
 !/.config/qtile/
-!/.config/rofi/*
+!/.config/rofi/
 !/.config/rofimoji.rc
 !/.config/starship.toml
 !/.config/wallpapers/
