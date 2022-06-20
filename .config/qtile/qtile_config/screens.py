@@ -112,27 +112,27 @@ screens = [
 if _get_num_monitors() > 1:
     screens.append(
         Screen(
-            top=Bar(
-                widgets=[
-                    widget.TaskList(
-                        border=theme.FOCUSED_COLOR,
-                        borderwidth=1,
-                        font="FiraCode Nerd Font",
-                        icon_size=0,
-                        margin=1,
-                        markup_normal=(
-                            f'<span foreground="{theme.UNFOCUSED_COLOR}" '
-                            + f'background="{theme.LIGHTER_DARK}">{{}}</span>'
-                        ),
-                        markup_focused=f'<span foreground="{theme.FOCUSED_COLOR}">{{}}</span>',
-                        max_title_width=128,
-                        parse_text=_get_app_name,
-                        unfocused_border=theme.DARK_GREY,
-                        urgent_border=theme.URGENT_COLOR,
-                    )
-                ],
-                size=theme.BAR_SIZE,
-                background=theme.BG,
-            )
+        top=Bar(
+            widgets=[
+                widget.TaskList(
+                    border=theme.FOCUSED_COLOR,
+                    borderwidth=1,
+                    font="FiraCode Nerd Font",
+                    icon_size=0,
+                    margin=1,
+                    markup_normal=(
+                        f'<span foreground="{theme.UNFOCUSED_COLOR}" '
+                        + f'background="{theme.LIGHTER_DARK}">{{}}</span>'
+                    ),
+                    markup_focused=f'<span foreground="{theme.FOCUSED_COLOR}">{{}}</span>',
+                    max_title_width=128,
+                    parse_text=_get_app_name,
+                    unfocused_border=theme.DARK_GREY,
+                    urgent_border=theme.URGENT_COLOR,
+                )
+            ],
+            size=theme.BAR_SIZE,
+            background=theme.BG,
         )
     )
+)

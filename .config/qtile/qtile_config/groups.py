@@ -42,8 +42,8 @@ groups = [
             Match(wm_class=["Microsoft Teams - Preview"]),
             Match(wm_instance_class="spotify"),
         ],
-        screen_affinity=1,
         spawn="com.slack.Slack" if is_working_hours() else None,
+        screen_affinity=0
     ),
     Group("WWW", label="", layout="columns", screen_affinity=1),
     Group("DEV", label="", layout="monadthreecol", screen_affinity=1),
