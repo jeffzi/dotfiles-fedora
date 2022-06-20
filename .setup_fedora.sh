@@ -109,6 +109,7 @@ dnf_packages=(
     tldr
     unrar
     vlc
+    xrandr
 )
 
 flathub_packages=(
@@ -352,7 +353,7 @@ install_packages
 #==============================================================================
 info "Setting up fish shell..."
 dnf install -y fish util-linux-user starship
-chsh -s /usr/bin/fish "$LOGNAME"
+chsh -s /usr/bin/fish "$(logname)"
 
 #==============================================================================
 # Install development and build tools 
@@ -366,6 +367,7 @@ info "Installing Git Credential Manager..."
 archive=$(download_latest_github_release "GitCredentialManager/git-credential-manager" "gcmcore-linux_amd64.*.tar.gz$")
 tar -xvf "$archive" -C /usr/local/bin
 git-credential-manager-core configure
+rm -rf "$archive"
 
 #==============================================================================
 # Setup python
@@ -385,7 +387,7 @@ dnf -y install \
     libffi-devel \
     xz-devel
 
-sudo -i -u "$LOGNAME" bash << EOF
+sudo -i -u "$(logname)" bash << EOF
 # install pyenv
 curl https://pyenv.run | bash
 exec $SHELL
@@ -394,13 +396,16 @@ pyenv install --list | grep " 3.7" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.9" | tail -1 | xargs pyenv install -v
 pyenv install --list | grep " 3.10" | tail -1 | xargs pyenv install -v
-# 3.8 as global version
-pyenv install --list | grep " 3.8" | tail -1 | xargs pyenv global
+# 3.10 as global version
+pyenv install --list | grep " 3.10" | tail -1 | xargs pyenv global
 
 # install poetry
 curl -sSL https://install.python-poetry.org | python -
 #  Store python virtual environments in the package s directory
 poetry config virtualenvs.in-project true
+
+# install linters
+py
 EOF
 
 #==============================================================================
@@ -413,7 +418,7 @@ dnf -y install moby-engine
 # Start & enable Docker daemon
 systemctl enable --now docker.service
 groupadd docker || true
-usermod -aG docker "$LOGNAME"
+usermod -aG docker "$(logname)"
 
 #==============================================================================
 # Install awscli
@@ -441,6 +446,7 @@ install_awscli
 info "Installing Mullvad..."
 mullvad_rpm=$(download_latest_github_release "mullvad/mullvadvpn-app" "MullvadVPN-.*_x86_64.rpm$")
 dnf install -y "$mullvad_rpm"
+rm -rf "$archive"
 
 #==============================================================================
 # install fonts
@@ -452,9 +458,9 @@ rpm -ivh --force https://downloads.sourceforge.net/project/mscorefonts2/rpms/mst
 
 rm -rf /tmp/nerd-fonts
 git clone --depth 1 https://github.com/ryanoasis/nerd-fonts.git /tmp/nerd-fonts
-sudo -i -u "$LOGNAME" bash /tmp/nerd-fonts/install.sh Hack
-sudo -i -u "$LOGNAME" bash /tmp/nerd-fonts/install.sh FiraCode
-sudo -i -u "$LOGNAME" bash /tmp/nerd-fonts/install.sh SourceCodePro
+sudo -i -u "$(logname)" bash /tmp/nerd-fonts/install.sh Hack
+sudo -i -u "$(logname)" bash /tmp/nerd-fonts/install.sh FiraCode
+sudo -i -u "$(logname)" bash /tmp/nerd-fonts/install.sh SourceCodePro
 
 #==============================================================================
 # Set performance profile
@@ -481,10 +487,12 @@ dnf -y install gnome-themes-extra gtk-murrine-engine sassc
 # install gtk theme
 rm -rf /tmp/Orchis-theme
 git clone https://github.com/vinceliuice/Orchis-theme.git /tmp/Orchis-theme
-sudo -i -u "$LOGNAME" bash /tmp/Orchis-theme/install.sh --tweaks solid
+chown -R  $(logname) /tmp/Orchis-theme
+sudo -i -u "$(logname)" bash /tmp/Orchis-theme/install.sh --tweaks solid -l
+flatpak override --filesystem=xdg-config/gtk-4.0
 
 # install icon theme
-sudo -i -u "$LOGNAME" wget -qO- https://git.io/papirus-icon-theme-install | sh
+sudo -i -u "$(logname)" wget -qO- https://git.io/papirus-icon-theme-install | sh
 
 # set up themes
 gsettings set org.gnome.desktop.interface gtk-theme "Orchis-dark"
@@ -511,8 +519,8 @@ dnf -y install kvantum
 # install qt theme
 rm -rf /tmp/Qogir-kde
 git clone https://github.com/vinceliuice/Qogir-kde.git /tmp/Qogir-kde
-sudo -i -u "$LOGNAME" bash /tmp/Qogir-kde/install.sh
-sudo -i -u "$LOGNAME" kvantummanager --set "Qogir-dark-solid"
+sudo -i -u "$(logname)" bash /tmp/Qogir-kde/install.sh
+sudo -i -u "$(logname)" kvantummanager --set "Qogir-dark-solid"
 
 #==============================================================================
 # setup qtile
@@ -523,9 +531,9 @@ info "Setting up qtile..."
 dnf -y install pulseaudio-utils pavucontrol
 
 # install qtile
-sudo -i -u "$LOGNAME" pip install xcffib
-sudo -i -u "$LOGNAME" pip install --upgrade --force-reinstall --no-cache-dir cairocffi[xcb]
-sudo -i -u "$LOGNAME" pip install dbus-next psutil python-xlib qtile
+sudo -i -u "$(logname)" pip install xcffib
+sudo -i -u "$(logname)" pip install --upgrade --force-reinstall --no-cache-dir cairocffi[xcb]
+sudo -i -u "$(logname)" pip install dbus-next psutil python-xlib qtile
 
 
 # add qtile session
@@ -568,13 +576,56 @@ bat cache --build
 # fixing nvidia screen tearning
 #==============================================================================
 # https://wiki.archlinux.org/title/NVIDIA/Troubleshooting#Avoid_screen_tearing
-mkdir -p /etc/X11/xorg.conf.d/
-cat <<EOF > /etc/X11/xorg.conf.d/20-nvidia.conf
+cat <<EOF > /etc/X11/xorg.conf
+# nvidia-settings: X configuration file generated by nvidia-settings
+# nvidia-settings:  version 510.68.02
+
+
+Section "ServerLayout"
+    Identifier     "Layout0"
+    Screen      0  "Screen0" 0 0
+    InputDevice    "Keyboard0" "CoreKeyboard"
+    InputDevice    "Mouse0" "CorePointer"
+    Option         "Xinerama" "0"
+EndSection
+
+Section "Files"
+EndSection
+
+Section "InputDevice"
+
+    # generated from default
+    Identifier     "Mouse0"
+    Driver         "mouse"
+    Option         "Protocol" "auto"
+    Option         "Device" "/dev/input/mice"
+    Option         "Emulate3Buttons" "no"
+    Option         "ZAxisMapping" "4 5"
+EndSection
+
+Section "InputDevice"
+
+    # generated from default
+    Identifier     "Keyboard0"
+    Driver         "kbd"
+EndSection
+
+Section "Monitor"
+
+    # HorizSync source: edid, VertRefresh source: edid
+    Identifier     "Monitor0"
+    VendorName     "Unknown"
+    ModelName      "Idek Iiyama PL2294H"
+    HorizSync       30.0 - 85.0
+    VertRefresh     55.0 - 76.0
+    Option         "DPMS"
+EndSection
+
 Section "Device"
     Identifier     "Device0"
     Driver         "nvidia"
     VendorName     "NVIDIA Corporation"
-    BoardName      "NVIDIA GeForce RT 3080"
+    BoardName      "NVIDIA GeForce RTX 3080"
 EndSection
 
 Section "Screen"
@@ -583,12 +634,13 @@ Section "Screen"
     Monitor        "Monitor0"
     DefaultDepth    24
     Option         "Stereo" "0"
-    Option         "metamodes" "nvidia-auto-select +0+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On}"
-    Option         "AllowIndirectGLXProtocol" "off"
-    Option         "TripleBuffer" "on"
+    Option         "nvidiaXineramaInfoOrder" "DFP-1"
+    Option         "metamodes" "HDMI-0: nvidia-auto-select +0+0 {rotation=left, ForceCompositionPipeline=On, ForceFullCompositionPipeline=On}, DP-0: nvidia-auto-select +1080+0 {ForceCompositionPipeline=On, ForceFullCompositionPipeline=On}"
     Option         "SLI" "Off"
     Option         "MultiGPU" "Off"
     Option         "BaseMosaic" "off"
+    Option         "AllowIndirectGLXProtocol" "off"
+    Option         "TripleBuffer" "on"
     SubSection     "Display"
         Depth       24
     EndSubSection
