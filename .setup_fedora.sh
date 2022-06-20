@@ -404,8 +404,22 @@ curl -sSL https://install.python-poetry.org | python -
 #  Store python virtual environments in the package s directory
 poetry config virtualenvs.in-project true
 
+# install pipx
+python -m pip install --user pipx
+python -m pipx ensurepath
+
 # install linters
-py
+pipx install black 
+pipx install flake8 
+pipx install isort 
+pipx install mypy 
+pipx install nox 
+pipx install tox
+pipx install pre-commit
+pipx install pylint 
+pipx install pytest
+pipx inject pytest pytest-clarity 
+pipx inject pytest pytest-sugar
 EOF
 
 #==============================================================================
@@ -414,7 +428,11 @@ EOF
 info "Setting up docker..."
 
 # Install Docker
-dnf -y install moby-engine
+dnf -y install moby-engine docker-compose
+
+# disable SELinux
+sed -i -e 's/SELINUX=/SELINUX=disabled #/g' /etc/selinux/config
+
 # Start & enable Docker daemon
 systemctl enable --now docker.service
 groupadd docker || true
