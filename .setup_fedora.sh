@@ -101,8 +101,10 @@ dnf_packages=(
     p7zip-plugins
     pandoc
     picom
+    rclone
     ripgrep
     rstudio
+    solaar
     thunar
     thunar-archive-plugin
     thunar-volman
@@ -453,7 +455,7 @@ install_awscli() {
     success "Installed awscli: $($(which aws) --version)"
 
     dnf --setopt=install_weak_deps=False -y install golang
-    go get -u github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login
+    go github.com/awslabs/amazon-ecr-credential-helper/ecr-login/cli/docker-credential-ecr-login@latest
 }
 install_awscli
 
