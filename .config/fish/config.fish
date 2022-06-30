@@ -22,9 +22,9 @@ set -gx PROJECT_PATHS ~/Projects ~/Projects/dev ~/Projects/work/metamoki ~/Proje
 abbr -a pjo pj open
 
 # pyenv init
-set -gx PATH $PATH $HOME/.pyenv/bin
+set --erase PYENV_VERSION
 status is-login; and pyenv init --path | source
-pyenv init - | source
+status is-interactive; and pyenv init - | source
 
 # go
 set -gx GOPATH $HOME/go
