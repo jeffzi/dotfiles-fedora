@@ -25,7 +25,7 @@ remove_packages=(
     gnome-calendar
     gnome-characters
     gnome-classic*
-    gnome-clocks
+    gnome-clocks``
     gnome-contacts
     gnome-documents
     gnome-logs
@@ -425,20 +425,48 @@ pipx inject pytest pytest-sugar
 EOF
 
 #==============================================================================
-# Setup docker
+# Setup docker https://docs.docker.com/engine/install/fedora/
 #==============================================================================
 info "Setting up docker..."
 
+# Uninstall old versions
+dnf remove \
+    docker \
+    docker-client \
+    docker-client-latest \
+    docker-common \
+    docker-latest \
+    docker-latest-logrotate \
+    docker-logrotate \
+    docker-selinux \
+    docker-engine-selinux \
+    docker-engine
+
+dnf config-manager \
+    --add-repo \
+    https://download.docker.com/linux/fedora/docker-ce.repo
+
 # Install Docker
-dnf -y install moby-engine docker-compose
+dnf -y install docker-ce docker-ce-cli containerd.io docker-compose-plugin
 
 # disable SELinux
 sed -i -e 's/SELINUX=/SELINUX=disabled #/g' /etc/selinux/config
 
 # Start & enable Docker daemon
-systemctl enable --now docker.service
+systemctl enable --now docker
 groupadd docker || true
 usermod -aG docker "$(logname)"
+
+# https://nvidia.github.io/libnvidia-container/
+info "Setting up Nvidia-container..."
+
+# fedora is not officially supported
+DIST=centos8
+curl -s -L https://nvidia.github.io/libnvidia-container/$DIST/libnvidia-container.repo | \
+  sudo tee /etc/yum.repos.d/libnvidia-container.repo
+
+dnf -y install nvidia-docker2 
+
 
 #==============================================================================
 # Install awscli
