@@ -79,7 +79,7 @@ message {
 
 textbox {
     padding: 10px 50px 10px 50px;
-    text-color: @fg;
+    text-color: @text;
 }
 
 listview {
