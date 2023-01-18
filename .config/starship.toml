@@ -8,6 +8,7 @@ error_symbol = "[✖](bold red)"
 min_time = 1000
 show_milliseconds = true
 show_notifications = true
+style = "underline white"
 
 [directory]
 truncation_length = 5
